@@ -1,12 +1,15 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/auth-context";
 import type { UserRole } from "@/lib/types";
-import { Calendar, Users } from "lucide-react";
+import { Calendar, Users, LogOut, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { ClinicianDashboard } from "./ClinicianDashboard";
 import { PatientDashboard } from "./PatientDashboard";
 
 export function TrialFlowApp() {
 	const [userRole, setUserRole] = useState<UserRole>("clinician");
+	const { user, signOut } = useAuth();
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-[#E6F2FF] to-white">
@@ -26,29 +29,54 @@ export function TrialFlowApp() {
 							</div>
 						</div>
 
-						{/* Role Switcher */}
-						<Tabs
-							value={userRole}
-							onValueChange={(value) => setUserRole(value as UserRole)}
-							className="w-auto"
-						>
-							<TabsList className="bg-[#0066CC]/10">
-								<TabsTrigger
-									value="clinician"
-									className="data-[state=active]:bg-[#0066CC] data-[state=active]:text-white"
-								>
-									<Users className="w-4 h-4 mr-2" />
-									Clinician View
-								</TabsTrigger>
-								<TabsTrigger
-									value="patient"
-									className="data-[state=active]:bg-[#0066CC] data-[state=active]:text-white"
-								>
-									<Calendar className="w-4 h-4 mr-2" />
-									Patient View
-								</TabsTrigger>
-							</TabsList>
-						</Tabs>
+						<div className="flex items-center gap-4">
+							{/* User Info */}
+							<div className="flex items-center gap-2 text-sm text-gray-600">
+								{user?.picture && (
+									<img 
+										src={user.picture} 
+										alt={user.name}
+										className="w-8 h-8 rounded-full"
+									/>
+								)}
+								<span>Welcome, {user?.name}</span>
+							</div>
+
+							{/* Role Switcher */}
+							<Tabs
+								value={userRole}
+								onValueChange={(value) => setUserRole(value as UserRole)}
+								className="w-auto"
+							>
+								<TabsList className="bg-[#0066CC]/10">
+									<TabsTrigger
+										value="clinician"
+										className="data-[state=active]:bg-[#0066CC] data-[state=active]:text-white"
+									>
+										<Users className="w-4 h-4 mr-2" />
+										Clinician View
+									</TabsTrigger>
+									<TabsTrigger
+										value="patient"
+										className="data-[state=active]:bg-[#0066CC] data-[state=active]:text-white"
+									>
+										<Calendar className="w-4 h-4 mr-2" />
+										Patient View
+									</TabsTrigger>
+								</TabsList>
+							</Tabs>
+
+							{/* Sign Out Button */}
+							<Button
+								onClick={signOut}
+								variant="outline"
+								size="sm"
+								className="text-gray-600 hover:text-gray-900"
+							>
+								<LogOut className="w-4 h-4 mr-2" />
+								Sign Out
+							</Button>
+						</div>
 					</div>
 				</div>
 			</header>

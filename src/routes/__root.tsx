@@ -1,3 +1,4 @@
+import { AuthProvider } from "@/lib/auth-context";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
 import * as React from "react";
 
@@ -7,8 +8,8 @@ export const Route = createRootRoute({
 
 function RootComponent() {
 	return (
-		<React.Fragment>
+		<AuthProvider>
 			<Outlet />
-		</React.Fragment>
+		</AuthProvider>
 	);
 }
