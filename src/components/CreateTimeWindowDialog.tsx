@@ -31,6 +31,8 @@ interface CreateTimeWindowDialogProps {
 	onOpenChange: (open: boolean) => void;
 	selectedPatient: Patient | null;
 	selectedSlot?: SlotInfo | null;
+	onCreated?: (ranges: { start: Date; end: Date }[]) => void;
+	blocked?: { start: Date; end: Date }[];
 }
 
 
@@ -54,6 +56,8 @@ export function CreateTimeWindowDialog({
 	onOpenChange,
 	selectedPatient,
 	selectedSlot,
+	onCreated,
+	blocked = [],
 }: CreateTimeWindowDialogProps) {
 	const { procedures } = useCustomProcedures();
 	const [selectedProcedures, setSelectedProcedures] = useState<string[]>([]);
@@ -90,9 +94,12 @@ export function CreateTimeWindowDialog({
 			setStartDate(format(earliestDate, "yyyy-MM-dd"));
 			setEndDate(format(latestDate, "yyyy-MM-dd"));
 
-			// Extract time range and set the time blocks
-			const startTime = format(start, "HH:mm");
-			const endTime = format(end, "HH:mm");
+			// Extract time range and set the time blocks (hour-only)
+			const startHour = parseInt(format(start, "HH"), 10);
+			const endHour = parseInt(format(end, "HH"), 10);
+			const startTime = `${String(Math.max(7, Math.min(18, startHour))).padStart(2, "0")}:00`;
+			const endTimeBase = Math.max(7, Math.min(18, endHour));
+			const endTime = `${String(endTimeBase <= Math.max(7, Math.min(18, startHour)) ? Math.min(endTimeBase + 1, 18) : endTimeBase).padStart(2, "0")}:00`;
 
 			// Get the day of week from the start date
 			const dayOfWeek = format(start, "EEEE"); // e.g., "Monday"
@@ -126,7 +133,7 @@ export function CreateTimeWindowDialog({
 	const handleAddTimeBlock = () => {
 		setTimeBlocks((prev) => [
 			...prev,
-			{ dayOfWeek: "Monday", startTime: "09:00", endTime: "17:00" },
+			{ dayOfWeek: "Monday", startTime: "07:00", endTime: "18:00" },
 		]);
 	};
 
@@ -134,16 +141,72 @@ export function CreateTimeWindowDialog({
 		setTimeBlocks((prev) => prev.filter((_, i) => i !== index));
 	};
 
-	const handleUpdateTimeBlock = (
+	const handleUpdateTimeBlockHour = (
 		index: number,
-		field: keyof TimeBlock,
-		value: string,
+		field: "startTime" | "endTime",
+		hour: number,
 	) => {
+		const clampHour = (h: number) => Math.max(7, Math.min(18, Math.floor(h)));
 		setTimeBlocks((prev) =>
-			prev.map((block, i) =>
-				i === index ? { ...block, [field]: value } : block,
-			),
+			prev.map((block, i) => {
+				if (i !== index) return block;
+				const hVal = clampHour(hour);
+				let next = { ...block } as TimeBlock;
+				next[field] = `${String(hVal).padStart(2, "0")}:00`;
+				const sHour = parseInt(next.startTime.split(":")[0] || "7", 10);
+				let eHour = parseInt(next.endTime.split(":")[0] || "8", 10);
+				if (eHour <= sHour) eHour = Math.min(sHour + 1, 18);
+				next.startTime = `${String(Math.max(7, Math.min(18, sHour))).padStart(2, "0")}:00`;
+				next.endTime = `${String(Math.max(7, Math.min(18, eHour))).padStart(2, "0")}:00`;
+				return next;
+			}),
 		);
+	};
+
+	const isHourDisabledForRange = (startHour: number, endHour: number) => {
+		if (!startDate || !endDate) return false;
+		const [sy, sm, sd] = startDate.split("-").map((n) => parseInt(n, 10));
+		const [ey, em, ed] = endDate.split("-").map((n) => parseInt(n, 10));
+		const startD = new Date(sy, (sm || 1) - 1, sd || 1);
+		const endD = new Date(ey, (em || 1) - 1, ed || 1);
+		const startTS = startD.getTime();
+		const endTS = endD.getTime();
+		const hourTS = (h: number) => new Date(startD.getFullYear(), startD.getMonth(), startD.getDate(), h, 0, 0, 0).getTime();
+		const isBlocked = (ts: number) => {
+			for (const block of blocked) {
+				const blockStartTS = block.start.getTime();
+				const blockEndTS = block.end.getTime();
+				if (blockStartTS <= ts && ts < blockEndTS) return true;
+			}
+			return false;
+		};
+		for (let h = startHour; h < endHour; h++) {
+			if (isBlocked(hourTS(h))) return true;
+		}
+		return false;
+	};
+
+	const isHourRangeDisabled = (startHour: number, endHour: number) => {
+		if (!startDate || !endDate) return false;
+		const [sy, sm, sd] = startDate.split("-").map((n) => parseInt(n, 10));
+		const [ey, em, ed] = endDate.split("-").map((n) => parseInt(n, 10));
+		const startD = new Date(sy, (sm || 1) - 1, sd || 1);
+		const endD = new Date(ey, (em || 1) - 1, ed || 1);
+		const startTS = startD.getTime();
+		const endTS = endD.getTime();
+		const hourTS = (h: number) => new Date(startD.getFullYear(), startD.getMonth(), startD.getDate(), h, 0, 0, 0).getTime();
+		const isBlocked = (ts: number) => {
+			for (const block of blocked) {
+				const blockStartTS = block.start.getTime();
+				const blockEndTS = block.end.getTime();
+				if (blockStartTS <= ts && ts < blockEndTS) return true;
+			}
+			return false;
+		};
+		for (let h = startHour; h <= endHour; h++) {
+			if (isBlocked(hourTS(h))) return true;
+		}
+		return false;
 	};
 
 	const sendEmailsToPatients = async () => {
@@ -207,7 +270,6 @@ export function CreateTimeWindowDialog({
 
 	const handleSubmit = async () => {
 		setIsCreating(true);
-		
 		try {
 			// In production, this would call TimeWindowORM.insert()
 			console.log("Creating time window:", {
@@ -220,8 +282,47 @@ export function CreateTimeWindowDialog({
 
 			// Send emails to all patients
 			await sendEmailsToPatients();
-			
+
+			// Compute concrete time ranges for each day based on date range and time blocks
+			const ranges: { start: Date; end: Date }[] = [];
+			if (startDate && endDate && timeBlocks.length > 0) {
+				const [sy, sm, sd] = startDate.split("-").map((n) => parseInt(n, 10));
+				const [ey, em, ed] = endDate.split("-").map((n) => parseInt(n, 10));
+				let d = new Date(sy, (sm || 1) - 1, sd || 1);
+				const endD = new Date(ey, (em || 1) - 1, ed || 1);
+				const START_BOUND = 7 * 60;
+				const END_BOUND = 18 * 60;
+				const clampMin = (min: number) => Math.max(START_BOUND, Math.min(min, END_BOUND));
+				const toMin = (t: string) => {
+					const [h, m] = t.split(":").map((x) => parseInt(x, 10));
+					return (h || 0) * 60 + (m || 0);
+				};
+				while (d.getTime() <= endD.getTime()) {
+					for (const b of timeBlocks) {
+						let sMin = clampMin(toMin(b.startTime));
+						let eMin = clampMin(toMin(b.endTime));
+						if (eMin <= sMin) eMin = Math.min(sMin + 15, END_BOUND);
+						const s = new Date(d.getFullYear(), d.getMonth(), d.getDate(), Math.floor(sMin / 60), sMin % 60, 0, 0);
+						const e = new Date(d.getFullYear(), d.getMonth(), d.getDate(), Math.floor(eMin / 60), eMin % 60, 0, 0);
+						ranges.push({ start: s, end: e });
+					}
+					// next day
+					d.setDate(d.getDate() + 1);
+					d.setHours(0, 0, 0, 0);
+				}
+			}
+
+			// Notify parent so calendar can render the created windows
+			if (ranges.length > 0) {
+				onCreated?.(ranges);
+			}
+
 			onOpenChange(false);
+			// Reset dialog selections to defaults
+			setSelectedProcedures([]);
+			setStartDate("");
+			setEndDate("");
+			setTimeBlocks([{ dayOfWeek: "Monday", startTime: "07:00", endTime: "18:00" }]);
 		} catch (error) {
 			console.error("Error creating time window:", error);
 			toast.error("Failed to create time window");
@@ -407,7 +508,7 @@ export function CreateTimeWindowDialog({
 									<Select
 										value={block.dayOfWeek}
 										onValueChange={(value) =>
-											handleUpdateTimeBlock(index, "dayOfWeek", value)
+											setTimeBlocks((prev) => prev.map((b, i) => (i === index ? { ...b, dayOfWeek: value } : b)))
 										}
 									>
 										<SelectTrigger className="flex-1">
@@ -422,25 +523,46 @@ export function CreateTimeWindowDialog({
 										</SelectContent>
 									</Select>
 
-									<Input
-										type="time"
-										value={block.startTime}
-										onChange={(e) =>
-											handleUpdateTimeBlock(index, "startTime", e.target.value)
-										}
-										className="w-32"
-									/>
+									<Select
+										value={String(parseInt(block.startTime.split(":")[0] || "7", 10))}
+										onValueChange={(val) => handleUpdateTimeBlockHour(index, "startTime", parseInt(val, 10))}
+									>
+										<SelectTrigger className="w-32">
+											<SelectValue />
+										</SelectTrigger>
+										<SelectContent className="max-h-64 overflow-auto">
+											{Array.from({ length: 12 }, (_, i) => 7 + i).map((h) => {
+												const disabled = isHourDisabledForRange(h, h + 1);
+												return (
+													<SelectItem key={h} value={String(h)} disabled={disabled}>
+														{new Date(1970,0,1,h).toLocaleTimeString("en-US", { hour: "numeric" })}
+													</SelectItem>
+												);
+											})}
+										</SelectContent>
+									</Select>
 
 									<span className="text-gray-500">to</span>
 
-									<Input
-										type="time"
-										value={block.endTime}
-										onChange={(e) =>
-											handleUpdateTimeBlock(index, "endTime", e.target.value)
-										}
-										className="w-32"
-									/>
+									<Select
+										value={String(parseInt(block.endTime.split(":")[0] || "8", 10))}
+										onValueChange={(val) => handleUpdateTimeBlockHour(index, "endTime", parseInt(val, 10))}
+									>
+										<SelectTrigger className="w-32">
+											<SelectValue />
+										</SelectTrigger>
+										<SelectContent className="max-h-64 overflow-auto">
+											{Array.from({ length: 12 }, (_, i) => 7 + i).map((h) => {
+												const startHour = parseInt(block.startTime.split(":")[0] || "7", 10);
+												const disabled = h <= startHour || isHourRangeDisabled(startHour, h);
+												return (
+													<SelectItem key={h} value={String(h)} disabled={disabled}>
+														{new Date(1970,0,1,h).toLocaleTimeString("en-US", { hour: "numeric" })}
+													</SelectItem>
+												);
+											})}
+										</SelectContent>
+									</Select>
 
 									{timeBlocks.length > 1 && (
 										<Button
