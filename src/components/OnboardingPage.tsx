@@ -5,6 +5,33 @@ import { Calendar, Users, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 
+function LogoTF({ size = 48, className = "" }: { size?: number; className?: string }) {
+  const deepBlue = "#1e40af";
+  return (
+    <div
+      className={`rounded-lg flex items-center justify-center select-none ${className}`}
+      style={{ width: size, height: size, background: "transparent" }}
+      aria-label="TrialFlow logo"
+    >
+      <span
+        style={{
+          fontFamily:
+            "-apple-system, 'SF Pro Display', 'SF Pro Text', BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+          fontWeight: 700,
+          fontStyle: "italic",
+          fontSize: Math.round(size * 0.56),
+          lineHeight: 1,
+          color: deepBlue,
+          letterSpacing: -1.5,
+        }}
+      >
+        <span style={{ position: "relative", left: -2 }}>t</span>
+        <span style={{ position: "relative", marginLeft: -6 }}>f</span>
+      </span>
+    </div>
+  );
+}
+
 export function OnboardingPage() {
   const { user, setUserRole, isLoading } = useAuth();
   const navigate = useNavigate();
@@ -47,10 +74,8 @@ export function OnboardingPage() {
 
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-[#0066CC] to-[#0052A3] rounded-lg flex items-center justify-center">
-              <Calendar className="w-7 h-7 text-white" />
-            </div>
+          <div className="flex items-center justify-center gap-1 mb-4">
+            <LogoTF size={96} />
             <div>
               <h1 className="text-3xl font-bold text-gray-900">TrialFlow</h1>
               <p className="text-sm text-gray-600">Clinical Trial Scheduling</p>
@@ -80,12 +105,12 @@ export function OnboardingPage() {
               {/* Clinician Card */}
               <Card 
                 className={`cursor-pointer transition-all hover:shadow-lg ${
-                  selectedRole === 'clinician' ? 'ring-2 ring-[#0066CC] bg-[#0066CC]/5' : ''
+                  selectedRole === 'clinician' ? 'ring-2 ring-[#5191c4] bg-[#5191c4]/5' : ''
                 }`}
                 onClick={() => handleRoleSelect('clinician')}
               >
                 <CardHeader className="text-center">
-                  <div className="w-16 h-16 bg-[#0066CC] rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-[#5191c4] rounded-full flex items-center justify-center mx-auto mb-4">
                     <Users className="w-8 h-8 text-white" />
                   </div>
                   <CardTitle className="text-xl">Clinician</CardTitle>
@@ -114,12 +139,12 @@ export function OnboardingPage() {
               {/* Patient Card */}
               <Card 
                 className={`cursor-pointer transition-all hover:shadow-lg ${
-                  selectedRole === 'patient' ? 'ring-2 ring-[#0066CC] bg-[#0066CC]/5' : ''
+                  selectedRole === 'patient' ? 'ring-2 ring-[#5191c4] bg-[#5191c4]/5' : ''
                 }`}
                 onClick={() => handleRoleSelect('patient')}
               >
                 <CardHeader className="text-center">
-                  <div className="w-16 h-16 bg-[#0066CC] rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-[#5191c4] rounded-full flex items-center justify-center mx-auto mb-4">
                     <Calendar className="w-8 h-8 text-white" />
                   </div>
                   <CardTitle className="text-xl">Patient</CardTitle>
@@ -149,7 +174,7 @@ export function OnboardingPage() {
             {/* Loading State */}
             {isLoading && (
               <div className="text-center py-4">
-                <div className="inline-block w-6 h-6 border-2 border-[#0066CC] border-t-transparent rounded-full animate-spin"></div>
+                <div className="inline-block w-6 h-6 border-2 border-[#5191c4] border-t-transparent rounded-full animate-spin"></div>
               </div>
             )}
           </CardContent>
