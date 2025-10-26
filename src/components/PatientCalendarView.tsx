@@ -30,10 +30,11 @@ import {
 	Share2,
 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
-import { Calendar, dateFnsLocalizer } from "react-big-calendar";
+import { Calendar, dateFnsLocalizer, type View } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { mockPatientAppointments } from "@/lib/mock-data";
 import { enUS } from "date-fns/locale";
+import "@/styles/calendar.css";
 
 const locales = {
 	"en-US": enUS,
@@ -139,6 +140,8 @@ export function PatientCalendarView() {
 	const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
 		null,
 	);
+	const [currentDate, setCurrentDate] = useState(new Date());
+	const [currentView, setCurrentView] = useState<View>("week");
 
 	// Convert appointments to calendar events
 	const events = useMemo(
@@ -149,6 +152,16 @@ export function PatientCalendarView() {
 	// Handle selecting an existing event
 	const handleSelectEvent = useCallback((event: CalendarEvent) => {
 		setSelectedEvent(event);
+	}, []);
+
+	// Handle navigation (today, back, next buttons)
+	const handleNavigate = useCallback((newDate: Date) => {
+		setCurrentDate(newDate);
+	}, []);
+
+	// Handle view changes (month, week, day)
+	const handleViewChange = useCallback((newView: View) => {
+		setCurrentView(newView);
 	}, []);
 
 	// Custom event style based on status
@@ -247,7 +260,10 @@ export function PatientCalendarView() {
 							onSelectEvent={handleSelectEvent}
 							eventPropGetter={eventStyleGetter}
 							views={["month", "week", "day"]}
-							defaultView="week"
+							view={currentView}
+							onView={handleViewChange}
+							date={currentDate}
+							onNavigate={handleNavigate}
 							step={15}
 							timeslots={4}
 							className="trialflow-calendar"

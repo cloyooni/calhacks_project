@@ -19,12 +19,15 @@ import {
 } from "@/components/ui/select";
 import type { Patient, TimeBlock } from "@/lib/types";
 import { Calendar, Clock, Plus, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import type { SlotInfo } from "react-big-calendar";
+import { format } from "date-fns";
 
 interface CreateTimeWindowDialogProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 	selectedPatient: Patient | null;
+	selectedSlot?: SlotInfo | null;
 }
 
 // Mock procedures
@@ -51,6 +54,7 @@ export function CreateTimeWindowDialog({
 	open,
 	onOpenChange,
 	selectedPatient,
+	selectedSlot,
 }: CreateTimeWindowDialogProps) {
 	const [selectedProcedures, setSelectedProcedures] = useState<string[]>([]);
 	const [startDate, setStartDate] = useState("");
@@ -58,6 +62,56 @@ export function CreateTimeWindowDialog({
 	const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([
 		{ dayOfWeek: "Monday", startTime: "09:00", endTime: "17:00" },
 	]);
+
+	// Pre-populate dates and times when a slot is selected
+	useEffect(() => {
+		if (selectedSlot && open) {
+			const start = selectedSlot.start instanceof Date ? selectedSlot.start : new Date(selectedSlot.start);
+			const end = selectedSlot.end instanceof Date ? selectedSlot.end : new Date(selectedSlot.end);
+
+			console.log("Selected slot full data:", selectedSlot);
+
+			// Determine earliest/latest day directly from slot Date objects (avoid UTC string parsing)
+			let earliestDate = start;
+			let latestDate = end;
+			if (selectedSlot.slots && Array.isArray(selectedSlot.slots) && selectedSlot.slots.length > 0) {
+				const slotDates = selectedSlot.slots.map((slot) => (slot instanceof Date ? slot : new Date(slot)));
+				// Normalize to local midnight for comparison
+				const norm = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+				const normalized = slotDates.map(norm);
+				normalized.sort((a, b) => a.getTime() - b.getTime());
+				earliestDate = normalized[0] ?? start;
+				latestDate = normalized[normalized.length - 1] ?? end;
+			}
+
+			// Extract date range strings
+			setStartDate(format(earliestDate, "yyyy-MM-dd"));
+			setEndDate(format(latestDate, "yyyy-MM-dd"));
+
+			// Extract time range and set the time blocks
+			const startTime = format(start, "HH:mm");
+			const endTime = format(end, "HH:mm");
+
+			// Get the day of week from the start date
+			const dayOfWeek = format(start, "EEEE"); // e.g., "Monday"
+
+			// Pre-populate time blocks with the selected time range
+			setTimeBlocks([
+				{
+					dayOfWeek: dayOfWeek,
+					startTime: startTime,
+					endTime: endTime,
+				},
+			]);
+
+			console.log("Extracted time range:", {
+				dates: `${format(earliestDate, "yyyy-MM-dd")} to ${format(latestDate, "yyyy-MM-dd")}`,
+				times: `${startTime} to ${endTime}`,
+				dayOfWeek: dayOfWeek,
+				slotsCount: selectedSlot.slots?.length || 0,
+			});
+		}
+	}, [selectedSlot, open]);
 
 	const handleToggleProcedure = (procedureId: string) => {
 		setSelectedProcedures((prev) =>
@@ -119,6 +173,12 @@ export function CreateTimeWindowDialog({
 						{selectedPatient
 							? `Creating time window for ${selectedPatient.first_name} ${selectedPatient.last_name}`
 							: "Set up available time slots for patient appointments"}
+						{selectedSlot && startDate && endDate && (
+							<span className="block mt-1 text-[#0066CC] font-medium">
+								Selected range: {startDate}
+								{startDate !== endDate && ` to ${endDate}`}
+							</span>
+						)}
 					</DialogDescription>
 				</DialogHeader>
 
@@ -169,37 +229,55 @@ export function CreateTimeWindowDialog({
 					</div>
 
 					{/* Date Range */}
-					<div className="grid grid-cols-2 gap-4">
-						<div className="space-y-2">
-							<Label
-								htmlFor="startDate"
-								className="text-sm font-semibold text-gray-900"
-							>
-								Start Date *
+					<div className="space-y-3">
+						<div className="flex items-center justify-between">
+							<Label className="text-sm font-semibold text-gray-900">
+								Date Range *
 							</Label>
-							<Input
-								id="startDate"
-								type="date"
-								value={startDate}
-								onChange={(e) => setStartDate(e.target.value)}
-								className="border-[#0066CC]/20 focus:border-[#0066CC]"
-							/>
+							<p className="text-xs text-gray-500">
+								Extend range for multi-day window
+							</p>
 						</div>
-						<div className="space-y-2">
-							<Label
-								htmlFor="endDate"
-								className="text-sm font-semibold text-gray-900"
-							>
-								End Date *
-							</Label>
-							<Input
-								id="endDate"
-								type="date"
-								value={endDate}
-								onChange={(e) => setEndDate(e.target.value)}
-								className="border-[#0066CC]/20 focus:border-[#0066CC]"
-							/>
+						<div className="grid grid-cols-2 gap-4">
+							<div className="space-y-2">
+								<Label
+									htmlFor="startDate"
+									className="text-sm font-medium text-gray-700"
+								>
+									Start Date
+								</Label>
+								<Input
+									id="startDate"
+									type="date"
+									value={startDate}
+									onChange={(e) => setStartDate(e.target.value)}
+									className="border-[#0066CC]/30 focus:border-[#0066CC] focus:ring-2 focus:ring-[#0066CC]/20"
+								/>
+							</div>
+							<div className="space-y-2">
+								<Label
+									htmlFor="endDate"
+									className="text-sm font-medium text-gray-700"
+								>
+									End Date
+								</Label>
+								<Input
+									id="endDate"
+									type="date"
+									value={endDate}
+									onChange={(e) => setEndDate(e.target.value)}
+									className="border-[#0066CC]/30 focus:border-[#0066CC] focus:ring-2 focus:ring-[#0066CC]/20"
+								/>
+							</div>
 						</div>
+						{startDate && endDate && startDate !== endDate && (
+							<div className="flex items-center gap-2 p-2 bg-blue-50 rounded-md border border-blue-200">
+								<Calendar className="w-4 h-4 text-[#0066CC]" />
+								<p className="text-sm text-[#0066CC]">
+									Multi-day window: Time blocks will apply to all days in range
+								</p>
+							</div>
+						)}
 					</div>
 
 					{/* Time Blocks */}

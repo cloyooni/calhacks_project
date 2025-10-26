@@ -3,6 +3,7 @@
 
 .trialflow-calendar {
 	font-family: inherit;
+	position: relative;
 }
 
 /* Calendar header styling */
@@ -34,6 +35,31 @@
 /* Week and day view time slots */
 .trialflow-calendar .rbc-time-slot {
 	border-top-color: rgba(0, 102, 204, 0.1);
+	pointer-events: auto;
+}
+
+/* Custom selection highlighting for multi-day drag in week view */
+.trialflow-calendar .rbc-time-slot.rbc-selected-slot {
+	background-color: rgba(0, 102, 204, 0.18) !important;
+	border-left: 2px solid #0066cc !important;
+	border-right: 2px solid #0066cc !important;
+	box-shadow: inset 0 0 3px rgba(0, 102, 204, 0.25);
+	transition: background-color 0.1s ease;
+}
+
+/* First row of selected slots gets top border */
+.trialflow-calendar .rbc-time-slot.rbc-selected-slot:first-of-type {
+	border-top: 2px solid #0066cc !important;
+}
+
+/* Last row of selected slots gets bottom border */
+.trialflow-calendar .rbc-time-slot.rbc-selected-slot:last-of-type {
+	border-bottom: 2px solid #0066cc !important;
+}
+
+/* Enhanced visual feedback during selection */
+.trialflow-calendar .rbc-time-slot.rbc-selected-slot:hover {
+	background-color: rgba(0, 102, 204, 0.25) !important;
 }
 
 .trialflow-calendar .rbc-time-header-content {
@@ -169,9 +195,17 @@
 	background: white;
 }
 
-/* Week view all-day section */
+/* Show the all-day section to enable horizontal multi-day selection in week view */
 .trialflow-calendar .rbc-allday-cell {
-	background: #f9fafb;
+	display: table-cell;
+}
+
+.trialflow-calendar .rbc-time-header-content {
+	border-left-color: rgba(0, 102, 204, 0.2);
+}
+
+.trialflow-calendar .rbc-time-header.rbc-overflowing {
+	border-bottom: 2px solid rgba(0, 102, 204, 0.2);
 }
 
 .trialflow-calendar .rbc-row-segment {
@@ -225,9 +259,111 @@
 
 /* Selection highlight when dragging */
 .trialflow-calendar .rbc-slot-selection {
-	background-color: rgba(0, 102, 204, 0.2);
-	border: 2px dashed #0066cc;
-	border-radius: 4px;
+	background-color: rgba(0, 102, 204, 0.25);
+	border: 2px solid #0066cc;
+	border-radius: 6px;
+	color: #ffffff;
+	z-index: 10;
+	pointer-events: none;
+}
+
+/* Make selections more visible in week/day views - Enhanced for multi-day + time selection */
+.trialflow-calendar .rbc-day-slot .rbc-slot-selection {
+	background-color: rgba(0, 102, 204, 0.25);
+	border: 2px solid #0066cc;
+	box-shadow: 0 4px 12px rgba(0, 102, 204, 0.25);
+	border-radius: 6px;
+	color: #ffffff;
+	z-index: 10;
+}
+
+/* Enhance visual feedback when selecting across multiple day columns */
+.trialflow-calendar .rbc-time-slot.rbc-selected {
+	background-color: rgba(0, 102, 204, 0.18);
+}
+
+/* Show crosshair cursor in time grid to indicate draggable area */
+.trialflow-calendar .rbc-day-slot {
+	cursor: crosshair;
+}
+
+.trialflow-calendar .rbc-time-column {
+	cursor: crosshair;
+	user-select: none;
+}
+
+/* Enable selection across day columns */
+.trialflow-calendar .rbc-time-content {
+	position: relative;
+	user-select: none;
+}
+
+/* Override default column boundaries to allow horizontal dragging */
+.trialflow-calendar .rbc-time-content > * {
+	position: relative;
+	z-index: 1;
+}
+
+/* Make the time slots grid work for both vertical and horizontal selection */
+.trialflow-calendar .rbc-time-column {
+	position: relative;
+}
+
+/* Allow selection to work across day columns while keeping events clickable */
+.trialflow-calendar .rbc-day-slot .rbc-events-container {
+	/* Removed pointer-events: none to allow horizontal drag selection */
+	position: relative;
+}
+
+.trialflow-calendar .rbc-day-slot .rbc-event {
+	pointer-events: auto;
+	position: relative;
+	z-index: 2;
+}
+
+/* Allow dragging to cross column boundaries */
+.trialflow-calendar .rbc-time-column::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	width: 1px;
+	background: transparent;
+	pointer-events: none;
+}
+
+/* Visual feedback on hover for time slots */
+.trialflow-calendar .rbc-time-slot:hover {
+	background-color: rgba(0, 102, 204, 0.05);
+}
+
+/* Make the day columns more distinct */
+.trialflow-calendar .rbc-day-slot .rbc-time-column {
+	border-right: 1px solid rgba(0, 102, 204, 0.1);
+}
+
+/* Highlight the active selection area with stronger visual cues */
+.trialflow-calendar .rbc-slot-selecting .rbc-time-slot {
+	background-color: rgba(0, 102, 204, 0.15);
+}
+
+/* Enhance cross-column selection visibility */
+.trialflow-calendar .rbc-slot-selecting {
+	position: relative;
+}
+
+/* Make selection span visible across columns */
+.trialflow-calendar .rbc-slot-selecting .rbc-time-column {
+	border-left-color: rgba(0, 102, 204, 0.3);
+	border-right-color: rgba(0, 102, 204, 0.3);
+}
+
+/* Visual indicator for multi-day selection in progress */
+.trialflow-calendar .rbc-selecting .rbc-time-slot {
+	background-color: rgba(0, 102, 204, 0.1);
+	border-left: 1px dashed rgba(0, 102, 204, 0.5);
+	border-right: 1px dashed rgba(0, 102, 204, 0.5);
 }
 
 /* Responsive adjustments */
