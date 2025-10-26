@@ -106,7 +106,7 @@ export function LandingPage() {
 						<div className="grid md:grid-cols-2 gap-12 items-start relative z-10">
 						<div className="relative group">
 							<div className="absolute -inset-1 bg-gradient-to-r from-[#5191c4] to-[#8fb2ea] rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition duration-500" />
-							<div className="relative bg-white/85 rounded-2xl border border-[#0066CC]/20 ring-1 ring-blue-50 p-10 shadow-md hover:shadow-2xl transition-all duration-300">
+							<div className="relative bg-white/[0.83] rounded-2xl border border-[#0066CC]/20 ring-1 ring-blue-50 p-10 shadow-md hover:shadow-2xl transition-all duration-300">
 								<h2 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight tracking-tight">
 									Transform static protocols into
 									<span className="block mt-2 bg-gradient-to-r from-[#5191c4] to-[#8fb2ea] bg-clip-text text-transparent">interactive, intelligent schedules</span>
@@ -133,7 +133,7 @@ export function LandingPage() {
 
 						<div className="relative group">
 							<div className="absolute -inset-1 bg-gradient-to-r from-[#6397d5] to-[#8fb2ea] rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition duration-500" />
-							<div className="relative bg-white/85 rounded-2xl border border-[#0066CC]/20 ring-1 ring-blue-50 p-10 shadow-md hover:shadow-2xl transition-all duration-300">
+							<div className="relative bg-white/[0.83] rounded-2xl border border-[#0066CC]/20 ring-1 ring-blue-50 p-10 shadow-md hover:shadow-2xl transition-all duration-300">
 								<ul className="space-y-4">
 									<li className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
 										<div className="mt-0.5">
@@ -188,7 +188,7 @@ export function LandingPage() {
 						<div className="grid md:grid-cols-3 gap-8">
 							<div className="group relative">
 								<div className="absolute -inset-0.5 bg-gradient-to-r from-[#5191c4] to-[#8fb2ea] rounded-2xl opacity-0 group-hover:opacity-100 blur transition duration-300" />
-								<div className="relative p-8 bg-white/85 rounded-2xl border border-[#0066CC]/20 ring-1 ring-blue-50 shadow-md hover:shadow-2xl transition-all duration-300 h-full border-l-4 border-l-[#5191c4]">
+								<div className="relative p-8 bg-white/[0.83] rounded-2xl border border-[#0066CC]/20 ring-1 ring-blue-50 shadow-md hover:shadow-2xl transition-all duration-300 h-full border-l-4 border-l-[#5191c4]">
 									<div className="absolute top-0 left-8 right-8 h-1 bg-gradient-to-r from-[#5191c4] to-[#6397d5] rounded-b-full"></div>
 									<div className="flex items-center gap-3 mb-4 mt-2">
 										<div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#beb9fe]/20 to-[#beb9fe]/40 flex items-center justify-center">
@@ -221,7 +221,7 @@ export function LandingPage() {
 							
 							<div className="group relative">
 								<div className="absolute -inset-0.5 bg-gradient-to-r from-[#5191c4] to-[#8fb2ea] rounded-2xl opacity-0 group-hover:opacity-100 blur transition duration-300" />
-								<div className="relative p-8 bg-white/85 rounded-2xl border border-[#0066CC]/20 ring-1 ring-blue-50 shadow-md hover:shadow-2xl transition-all duration-300 h-full border-l-4 border-l-[#5191c4]">
+								<div className="relative p-8 bg-white/[0.83] rounded-2xl border border-[#0066CC]/20 ring-1 ring-blue-50 shadow-md hover:shadow-2xl transition-all duration-300 h-full border-l-4 border-l-[#5191c4]">
 									<div className="absolute top-0 left-8 right-8 h-1 bg-gradient-to-r from-[#5191c4] to-[#6397d5] rounded-b-full"></div>
 									<div className="flex items-center gap-3 mb-4 mt-2">
 										<div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#beb9fe]/20 to-[#beb9fe]/40 flex items-center justify-center">
@@ -254,7 +254,7 @@ export function LandingPage() {
 							
 							<div className="group relative">
 								<div className="absolute -inset-0.5 bg-gradient-to-r from-[#5191c4] to-[#8fb2ea] rounded-2xl opacity-0 group-hover:opacity-100 blur transition duration-300" />
-								<div className="relative p-8 bg-white/85 rounded-2xl border border-[#0066CC]/20 ring-1 ring-blue-50 shadow-md hover:shadow-2xl transition-all duration-300 h-full border-l-4 border-l-[#5191c4]">
+								<div className="relative p-8 bg-white/[0.83] rounded-2xl border border-[#0066CC]/20 ring-1 ring-blue-50 shadow-md hover:shadow-2xl transition-all duration-300 h-full border-l-4 border-l-[#5191c4]">
 									<div className="absolute top-0 left-8 right-8 h-1 bg-gradient-to-r from-[#5191c4] to-[#6397d5] rounded-b-full"></div>
 									<div className="flex items-center gap-3 mb-4 mt-2">
 										<div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#beb9fe]/20 to-[#beb9fe]/40 flex items-center justify-center">
