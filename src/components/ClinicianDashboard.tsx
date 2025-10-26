@@ -37,8 +37,6 @@ import { AIRecommendations } from "./AIRecommendations";
 import { ClinicianCalendarView } from "./ClinicianCalendarView";
 import { CreateTimeWindowDialog } from "./CreateTimeWindowDialog";
 import { PatientAppointmentsList } from "./PatientAppointmentList";
-import { BurdenScoreCard } from "./BurdenScoreCard";
-import { mockPatientAppointments } from "@/lib/mock-data";
 
 // Mock data for demonstration - in production, this would come from ORM
 const mockPatients: Patient[] = [
@@ -134,13 +132,6 @@ export function ClinicianDashboard() {
 
 			{/* AI Recommendations */}
 			<AIRecommendations />
-
-			{/* Burden Score (moved from patient to clinician dashboard) */}
-			<BurdenScoreCard
-				appointments={mockPatientAppointments}
-				travelMinutes={60}
-				windowDays={3}
-			/>
 
 			{/* View Tabs - Calendar vs List */}
 			<Tabs defaultValue="list" className="w-full">

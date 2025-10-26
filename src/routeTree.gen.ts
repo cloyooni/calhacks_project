@@ -17,7 +17,6 @@ import { Route as OnboardingImport } from './routes/onboarding'
 import { Route as JwtDebugImport } from './routes/jwt-debug'
 import { Route as ClinicianImport } from './routes/clinician'
 import { Route as AppImport } from './routes/app'
-import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
 import { Route as AuthGoogleCallbackImport } from './routes/auth.google.callback'
 
@@ -59,12 +58,6 @@ const AppRoute = AppImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AboutRoute = AboutImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
@@ -86,13 +79,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
     }
     '/app': {
@@ -151,7 +137,6 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/app': typeof AppRoute
   '/clinician': typeof ClinicianRoute
   '/jwt-debug': typeof JwtDebugRoute
@@ -163,7 +148,6 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/app': typeof AppRoute
   '/clinician': typeof ClinicianRoute
   '/jwt-debug': typeof JwtDebugRoute
@@ -176,7 +160,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/app': typeof AppRoute
   '/clinician': typeof ClinicianRoute
   '/jwt-debug': typeof JwtDebugRoute
@@ -190,7 +173,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/about'
     | '/app'
     | '/clinician'
     | '/jwt-debug'
@@ -201,7 +183,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/about'
     | '/app'
     | '/clinician'
     | '/jwt-debug'
@@ -212,7 +193,6 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/about'
     | '/app'
     | '/clinician'
     | '/jwt-debug'
@@ -225,7 +205,6 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
   AppRoute: typeof AppRoute
   ClinicianRoute: typeof ClinicianRoute
   JwtDebugRoute: typeof JwtDebugRoute
@@ -237,7 +216,6 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
   AppRoute: AppRoute,
   ClinicianRoute: ClinicianRoute,
   JwtDebugRoute: JwtDebugRoute,
@@ -258,7 +236,6 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/about",
         "/app",
         "/clinician",
         "/jwt-debug",
@@ -270,9 +247,6 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.tsx"
-    },
-    "/about": {
-      "filePath": "about.tsx"
     },
     "/app": {
       "filePath": "app.tsx"
