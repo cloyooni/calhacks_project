@@ -168,13 +168,13 @@ export function BurdenScoreCard({
 							<p className="text-xs text-gray-600 mt-1">Total Visits</p>
 						</div>
 						<div className="text-center p-4 bg-white rounded-lg border border-[#5191c4]/20">
-							<p className="text-2xl font-bold text-gray-700">
+							<p className="text-2xl font-bold text-[#5191c4]">
 								{burdenScore.totalRawBurden.toFixed(1)}
 							</p>
 							<p className="text-xs text-gray-600 mt-1">Raw Burden Points</p>
 						</div>
 						<div className="text-center p-4 bg-white rounded-lg border border-[#5191c4]/20">
-							<p className="text-2xl font-bold text-gray-700">
+							<p className="text-2xl font-bold text-[#5191c4]">
 								{(
 									burdenScore.totalRawBurden / burdenScore.visits.length
 								).toFixed(1)}
