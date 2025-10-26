@@ -38,6 +38,7 @@ import { ClinicianCalendarView } from "./ClinicianCalendarView";
 import { CreateTimeWindowDialog } from "./CreateTimeWindowDialog";
 import { PatientAppointmentsList } from "./PatientAppointmentList";
 import { BurdenScoreCard } from "./BurdenScoreCard";
+import { ProcedureManagerWidget } from "./ProcedureManagerWidget";
 import { mockPatientAppointments } from "@/lib/mock-data";
 
 // Mock data for demonstration - in production, this would come from ORM
@@ -134,6 +135,9 @@ export function ClinicianDashboard() {
 
 			{/* AI Recommendations */}
 			<AIRecommendations />
+
+			{/* Procedure Manager */}
+			<ProcedureManagerWidget />
 
 			{/* Burden Score (moved from patient to clinician dashboard) */}
 			<BurdenScoreCard

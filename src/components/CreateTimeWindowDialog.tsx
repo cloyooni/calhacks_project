@@ -1,6 +1,5 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
 	Dialog,
 	DialogContent,
@@ -18,6 +17,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { useGmailSendEmail } from "@/hooks/use-gmail-send-email";
+import { useCustomProcedures, type CustomProcedure } from "@/hooks/use-custom-procedures";
 import emailjs from '@emailjs/browser';
 import type { Patient, TimeBlock } from "@/lib/types";
 import { Calendar, Clock, Plus, X, Mail } from "lucide-react";
@@ -33,15 +33,6 @@ interface CreateTimeWindowDialogProps {
 	selectedSlot?: SlotInfo | null;
 }
 
-// Mock procedures
-const mockProcedures = [
-	{ id: "1", name: "Blood Draw", durationMinutes: 15 },
-	{ id: "2", name: "Vital Signs", durationMinutes: 10 },
-	{ id: "3", name: "ECG", durationMinutes: 30 },
-	{ id: "4", name: "MRI Scan", durationMinutes: 60 },
-	{ id: "5", name: "Physical Exam", durationMinutes: 45 },
-	{ id: "6", name: "Questionnaire", durationMinutes: 20 },
-];
 
 const daysOfWeek = [
 	"Monday",
@@ -64,6 +55,7 @@ export function CreateTimeWindowDialog({
 	selectedPatient,
 	selectedSlot,
 }: CreateTimeWindowDialogProps) {
+	const { procedures } = useCustomProcedures();
 	const [selectedProcedures, setSelectedProcedures] = useState<string[]>([]);
 	const [startDate, setStartDate] = useState("");
 	const [endDate, setEndDate] = useState("");
@@ -158,7 +150,7 @@ export function CreateTimeWindowDialog({
 		try {
 			// Get procedure names for the email
 			const procedureNames = selectedProcedures
-				.map((id) => mockProcedures.find((p) => p.id === id)?.name)
+				.map((id) => procedures.find((p: CustomProcedure) => p.id === id)?.name)
 				.filter(Boolean)
 				.join(", ");
 
@@ -239,7 +231,7 @@ export function CreateTimeWindowDialog({
 	};
 
 	const totalDuration = selectedProcedures.reduce((sum, id) => {
-		const procedure = mockProcedures.find((p) => p.id === id);
+		const procedure = procedures.find((p: CustomProcedure) => p.id === id);
 		return sum + (procedure?.durationMinutes || 0);
 	}, 0);
 
@@ -268,45 +260,71 @@ export function CreateTimeWindowDialog({
 					{/* Select Procedures */}
 					<div className="space-y-3">
 						<Label className="text-sm font-semibold text-gray-900">
-							Select Procedures *
+							Select Procedure *
 						</Label>
-						<div className="grid grid-cols-2 gap-2">
-							{mockProcedures.map((procedure) => (
-								<label
-									key={procedure.id}
-									htmlFor={`procedure-${procedure.id}`}
-									className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer transition-all ${
-										selectedProcedures.includes(procedure.id)
-											? "border-[#0066CC] bg-[#E6F2FF]/50"
-											: "border-gray-200 hover:border-gray-300"
-									}`}
-								>
-									<Checkbox
-										id={`procedure-${procedure.id}`}
-										checked={selectedProcedures.includes(procedure.id)}
-										onCheckedChange={() => handleToggleProcedure(procedure.id)}
-									/>
-									<div className="flex-1">
-										<p className="text-sm font-medium text-gray-900">
-											{procedure.name}
-										</p>
-										<p className="text-xs text-gray-600">
-											{procedure.durationMinutes} min
-										</p>
-									</div>
-								</label>
-							))}
-						</div>
-						{selectedProcedures.length > 0 && (
-							<div className="flex items-center gap-2 p-3 bg-[#E6F2FF]/30 rounded-lg border border-[#0066CC]/20">
-								<Clock className="w-4 h-4 text-[#0066CC]" />
-								<p className="text-sm text-gray-700">
-									Total estimated duration:{" "}
-									<span className="font-semibold text-[#0066CC]">
-										{totalDuration} minutes
-									</span>
-								</p>
+						
+						{procedures.length === 0 ? (
+							<div className="p-4 text-center text-gray-500 text-sm border rounded-lg">
+								No procedures available. Add procedures in the main dashboard.
 							</div>
+						) : (
+							<>
+								<Select
+									onValueChange={(value) => {
+										if (!selectedProcedures.includes(value)) {
+											handleToggleProcedure(value);
+										}
+									}}
+								>
+									<SelectTrigger className="border-[#0066CC]/30 focus:border-[#0066CC]">
+										<SelectValue placeholder="Select a procedure to add..." />
+									</SelectTrigger>
+									<SelectContent className="max-h-[200px]">
+										{procedures.map((procedure: CustomProcedure) => (
+											<SelectItem key={procedure.id} value={procedure.id}>
+												<div className="flex items-center justify-between w-full">
+													<span>{procedure.name}</span>
+													<span className="text-xs text-gray-500 ml-2">
+														({procedure.durationMinutes} min, Phase {procedure.phase})
+													</span>
+												</div>
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+								
+								{/* Selected Procedures */}
+								{selectedProcedures.length > 0 && (
+									<div className="space-y-2">
+										<div className="flex flex-wrap gap-2 p-3 border rounded-lg bg-gray-50">
+											{selectedProcedures.map((id) => {
+												const procedure = procedures.find((p: CustomProcedure) => p.id === id);
+												if (!procedure) return null;
+												return (
+													<Badge
+														key={id}
+														variant="secondary"
+														className="pr-1 cursor-pointer hover:bg-red-100"
+														onClick={() => handleToggleProcedure(id)}
+													>
+														{procedure.name}
+														<span className="ml-1 text-xs">×</span>
+													</Badge>
+												);
+											})}
+										</div>
+										<div className="flex items-center gap-2 p-3 bg-[#E6F2FF]/30 rounded-lg border border-[#0066CC]/20">
+											<Clock className="w-4 h-4 text-[#0066CC]" />
+											<p className="text-sm text-gray-700">
+												Total estimated duration:{" "}
+												<span className="font-semibold text-[#0066CC]">
+													{totalDuration} minutes
+												</span>
+											</p>
+										</div>
+									</div>
+								)}
+							</>
 						)}
 					</div>
 
@@ -450,7 +468,7 @@ export function CreateTimeWindowDialog({
 								<p>
 									<span className="font-medium">Procedures:</span>{" "}
 									{selectedProcedures
-										.map((id) => mockProcedures.find((p) => p.id === id)?.name)
+										.map((id) => procedures.find((p: CustomProcedure) => p.id === id)?.name)
 										.join(", ")}
 								</p>
 								<p>
