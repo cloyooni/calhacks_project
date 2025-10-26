@@ -1,6 +1,10 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+<<<<<<< HEAD
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
+=======
+import { Toaster } from "@/components/ui/sonner";
+>>>>>>> eabf044 (Added email functionality when creating time slots)
 import type { UserRole } from "@/lib/types";
 import { Calendar, Users, LogOut, ArrowLeft } from "lucide-react";
 import { useState } from "react";
@@ -101,6 +105,9 @@ export function TrialFlowApp() {
 					<PatientDashboard />
 				)}
 			</main>
+			
+			{/* Toast Notifications */}
+			<Toaster />
 		</div>
 	);
 }

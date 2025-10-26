@@ -151,6 +151,13 @@ class AuthIntegration {
 	private async validateToken(token: string): Promise<boolean> {
 		console.log("Validating token...", { API_BASE_URL });
 
+		// For Composio API keys, we'll skip validation and trust the token
+		// Composio tokens start with 'ak_' or 'ac_'
+		if (token.startsWith('ak_') || token.startsWith('ac_')) {
+			console.log("Composio token detected, skipping validation");
+			return true;
+		}
+
 		if (!API_BASE_URL) {
 			console.error("API_BASE_URL is not set");
 			return false;

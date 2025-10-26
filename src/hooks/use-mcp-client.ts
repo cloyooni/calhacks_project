@@ -54,8 +54,9 @@ export function useMCPClient() {
 			request: MCPRequest,
 			transportType = "streamable_http",
 		): Promise<unknown> => {
-			if (!isAuthenticated) {
-				throw new Error("User not authenticated");
+			// For Composio MCP, we need a token
+			if (!token) {
+				throw new Error("No token available. Please add auth_token to URL or set localStorage item 'creao_auth_token'");
 			}
 
 			// Base object with common fields for reporting
