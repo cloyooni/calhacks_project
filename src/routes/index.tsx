@@ -1,5 +1,4 @@
-import { SignInPage } from "@/components/SignInPage";
-import { TrialFlowApp } from "@/components/TouchFlowApp";
+import { LandingPage } from "@/components/LandingPage";
 import { OnboardingPage } from "@/components/OnboardingPage";
 import { useAuth } from "@/lib/auth-context";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
@@ -46,6 +45,6 @@ function App() {
 		);
 	}
 
-	// Default to sign-in page
-	return <SignInPage />;
+	// Default to public landing page
+	return <LandingPage />;
 }

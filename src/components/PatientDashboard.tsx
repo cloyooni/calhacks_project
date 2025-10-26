@@ -33,7 +33,6 @@ import {
 	XCircle,
 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { BurdenScoreCard } from "./BurdenScoreCard";
 import { PatientCalendarView } from "./PatientCalendarView";
 
 // Mock data for simple display
@@ -84,12 +83,7 @@ export function PatientDashboard() {
 
 	return (
 		<div className="space-y-6">
-			{/* Burden Score Card */}
-			<BurdenScoreCard
-				appointments={mockPatientAppointments}
-				travelMinutes={60}
-				windowDays={3}
-			/>
+			{/* Burden Score Card moved to clinician dashboard */}
 
 			{/* Progress Tracker */}
 			<Card className="border-[#0066CC]/20 bg-gradient-to-br from-white to-[#E6F2FF]/30">
