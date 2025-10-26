@@ -20,16 +20,11 @@ import {
 import { useGmailSendEmail } from "@/hooks/use-gmail-send-email";
 import emailjs from '@emailjs/browser';
 import type { Patient, TimeBlock } from "@/lib/types";
-<<<<<<< HEAD
-import { Calendar, Clock, Plus, X } from "lucide-react";
+import { Calendar, Clock, Plus, X, Mail } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import type { SlotInfo } from "react-big-calendar";
 import { format } from "date-fns";
-=======
-import { Calendar, Clock, Plus, X, Mail } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
->>>>>>> eabf044 (Added email functionality when creating time slots)
 
 interface CreateTimeWindowDialogProps {
 	open: boolean;
