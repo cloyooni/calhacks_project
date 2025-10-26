@@ -25,9 +25,9 @@ function App() {
 				console.log('Navigating to onboarding');
 				navigate({ to: '/onboarding', replace: true });
 			} else {
-				// User has role - go to main app
-				console.log('Navigating to app');
-				navigate({ to: '/app', replace: true });
+				// User has role - go to role-specific page
+				console.log('Navigating to', user.role, 'page');
+				navigate({ to: user.role === 'clinician' ? '/clinician' : '/patient', replace: true });
 			}
 		}
 	}, [user, isLoading, navigate]);

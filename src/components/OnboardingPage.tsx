@@ -21,8 +21,8 @@ export function OnboardingPage() {
         // Update the user role through the auth context
         setUserRole(role);
         
-        // Navigate to main app
-        navigate({ to: '/app' });
+        // Navigate to role-specific page
+        navigate({ to: role === 'clinician' ? '/clinician' : '/patient' });
       }
     } catch (error) {
       console.error('Error setting user role:', error);

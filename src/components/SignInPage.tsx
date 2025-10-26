@@ -28,7 +28,8 @@ export function SignInPage() {
       if (!user.role) {
         navigate({ to: '/onboarding' });
       } else {
-        navigate({ to: '/app' });
+        // Navigate to role-specific page
+        navigate({ to: user.role === 'clinician' ? '/clinician' : '/patient' });
       }
     }
   }, [user, navigate]);
