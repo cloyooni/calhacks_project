@@ -35,6 +35,7 @@ import { useState } from "react";
 import { ClinicianCalendarView } from "./ClinicianCalendarView";
 import { PatientAppointmentsList } from "./PatientAppointmentList";
 import { BurdenScoreCard } from "./BurdenScoreCard";
+import { ProcedureManagerWidget } from "./ProcedureManagerWidget";
 import { AddPatientDialog } from "./AddPatientDialog";
 import { mockPatientAppointments } from "@/lib/mock-data";
 
@@ -140,11 +141,11 @@ export function ClinicianDashboard() {
 							<p className="text-sm font-medium text-gray-600">Completed Today</p>
 						</div>
 					</CardContent>
-				</Card>
+		</Card>
 			</div>
 
-			{/* Procedure Manager */}
-			{/* <ProcedureManagerWidget /> */}
+		{/* Procedure Manager */}
+		<ProcedureManagerWidget />
 
 			{/* View Tabs - Calendar vs List */}
 			<Tabs defaultValue="list" className="w-full">
