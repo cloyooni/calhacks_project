@@ -334,9 +334,11 @@ export function ClinicianCalendarView() {
 				const end = new Date(y, m, d, endH, endM, 0, 0);
 				if (end.getTime() <= start.getTime()) end.setMinutes(start.getMinutes() + 15);
 				const id = `${baseId}-${idx}`;
+				const startTime = format(start, 'h:mm a');
+				const endTime = format(end, 'h:mm a');
 				return {
 					id,
-					title: "Time Window",
+					title: `${startTime} - ${endTime}`,
 					start,
 					end,
 					allDay: false,
@@ -363,11 +365,14 @@ export function ClinicianCalendarView() {
 			const start = new Date(sy, sm, sd, selectedStart.getHours(), selectedStart.getMinutes(), 0, 0);
 			const end = new Date(ey, em, ed, selectedEnd.getHours(), selectedEnd.getMinutes(), 0, 0);
 			if (end.getTime() <= start.getTime()) end.setMinutes(start.getMinutes() + 15);
+			const startTime = format(start, 'h:mm a');
+			const endTime = format(end, 'h:mm a');
 			newEvents = [{
 				id,
-				title: "Time Window",
+				title: `${startTime} - ${endTime}`,
 				start,
 				end,
+				allDay: false,
 				resource: {
 					type: "time_window",
 					data: {
@@ -587,22 +592,35 @@ export function ClinicianCalendarView() {
 				selectedSlot={selectedSlot}
 				onCreated={(ranges) => {
 					const baseId = `tw-${Date.now()}`;
-					const newEvents: CalendarEvent[] = ranges.map((r, idx): CalendarEvent => ({
-						id: `${baseId}-${idx}`,
-						title: "Time Window",
-						start: r.start,
-						end: r.end,
-						resource: {
-							type: "time_window",
-							data: {
-								id: `${baseId}-${idx}`,
-								start_date: r.start.toISOString(),
-								end_date: r.end.toISOString(),
+					console.log('Creating time windows from ranges:', ranges);
+					const newEvents: CalendarEvent[] = ranges.map((r, idx): CalendarEvent => {
+						const startTime = format(r.start, 'h:mm a');
+						const endTime = format(r.end, 'h:mm a');
+						const event = {
+							id: `${baseId}-${idx}`,
+							title: `${startTime} - ${endTime}`,
+							start: r.start,
+							end: r.end,
+							allDay: false,
+							resource: {
+								type: "time_window",
+								data: {
+									id: `${baseId}-${idx}`,
+									start_date: r.start.toISOString(),
+									end_date: r.end.toISOString(),
+									status: TimeWindowStatus.Open,
+								} as any,
 								status: TimeWindowStatus.Open,
-							} as any,
-							status: TimeWindowStatus.Open,
-						},
-					}));
+							},
+						};
+						console.log(`Created event ${idx}:`, {
+							id: event.id,
+							start: event.start.toISOString(),
+							end: event.end.toISOString(),
+							allDay: event.allDay,
+						});
+						return event;
+					});
 					setCreatedTimeWindows((prev) => [...prev, ...newEvents]);
 				}}
 			/>

@@ -185,6 +185,7 @@ export interface CalendarEvent {
 	title: string;
 	start: Date;
 	end: Date;
+	allDay?: boolean;
 	resource?: {
 		type: "appointment" | "time_window";
 		data: Appointment | TimeWindow;
@@ -215,6 +216,7 @@ export function appointmentToCalendarEvent(
 		title: `${patientName} - ${procedureNames}`,
 		start,
 		end,
+		allDay: false,
 		resource: {
 			type: "appointment",
 			data: appointment,
@@ -238,6 +240,7 @@ export function timeWindowToCalendarEvent(
 		title: `Time Window: ${patientName || "Patient"}`,
 		start,
 		end,
+		allDay: false,
 		resource: {
 			type: "time_window",
 			data: timeWindow,

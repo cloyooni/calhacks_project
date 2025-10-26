@@ -195,9 +195,9 @@
 	background: white;
 }
 
-/* Show the all-day section to enable horizontal multi-day selection in week view */
+/* Hide the all-day section since we only use timed events */
 .trialflow-calendar .rbc-allday-cell {
-	display: table-cell;
+	display: none;
 }
 
 .trialflow-calendar .rbc-time-header-content {
@@ -282,13 +282,13 @@
 	background-color: rgba(0, 102, 204, 0.18);
 }
 
-/* Show crosshair cursor in time grid to indicate draggable area */
+/* Default cursor for time grid (selection disabled) */
 .trialflow-calendar .rbc-day-slot {
-	cursor: crosshair;
+	cursor: default;
 }
 
 .trialflow-calendar .rbc-time-column {
-	cursor: crosshair;
+	cursor: default;
 	user-select: none;
 }
 
