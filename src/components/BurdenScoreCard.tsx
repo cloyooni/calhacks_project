@@ -66,16 +66,16 @@ export function BurdenScoreCard({
 
 	if (loading) {
 		return (
-			<Card className="border-[#0066CC]/20">
+			<Card className="border-[#5191c4]/20">
 				<CardHeader>
 					<CardTitle className="text-xl text-gray-900 flex items-center gap-2">
-						<Activity className="w-5 h-5 text-[#0066CC] animate-pulse" />
+						<Activity className="w-5 h-5 text-[#5191c4] animate-pulse" />
 						Calculating Burden Score...
 					</CardTitle>
 				</CardHeader>
 				<CardContent>
 					<div className="h-32 flex items-center justify-center">
-						<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0066CC]" />
+						<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#5191c4]" />
 					</div>
 				</CardContent>
 			</Card>
@@ -84,10 +84,10 @@ export function BurdenScoreCard({
 
 	if (!burdenScore || appointments.length === 0) {
 		return (
-			<Card className="border-[#0066CC]/20">
+			<Card className="border-[#5191c4]/20">
 				<CardHeader>
 					<CardTitle className="text-xl text-gray-900 flex items-center gap-2">
-						<Activity className="w-5 h-5 text-[#0066CC]" />
+						<Activity className="w-5 h-5 text-[#5191c4]" />
 						Trial Burden Score
 					</CardTitle>
 					<CardDescription>
@@ -109,10 +109,10 @@ export function BurdenScoreCard({
 	return (
 		<Card className={`border-2 ${categoryInfo.borderColor}`}>
 			<CardHeader>
-				<div className="flex items-start justify-between">
+					<div className="flex items-start justify-between">
 					<div className="flex-1">
 						<CardTitle className="text-xl text-gray-900 flex items-center gap-2">
-							<Activity className="w-5 h-5 text-[#0066CC]" />
+							<Activity className="w-5 h-5 text-[#5191c4]" />
 							Trial Burden Score
 						</CardTitle>
 						<CardDescription>
@@ -120,9 +120,10 @@ export function BurdenScoreCard({
 						</CardDescription>
 					</div>
 					<Button
-						variant="ghost"
+						variant="outline"
 						size="sm"
 						onClick={() => setShowDetails(!showDetails)}
+						className="border-[#5191c4] text-[#5191c4] hover:bg-[#5191c4] hover:text-white"
 					>
 						<Info className="w-4 h-4 mr-1" />
 						{showDetails ? "Hide" : "Show"} Details
@@ -152,7 +153,7 @@ export function BurdenScoreCard({
 									{categoryInfo.description}
 								</p>
 							</div>
-							<div className="hidden sm:flex items-center justify-center w-32 h-32 rounded-full border-8 ${categoryInfo.borderColor}">
+							<div className={`hidden sm:flex items-center justify-center w-32 h-32 rounded-full border-8 ${categoryInfo.borderColor}`}>
 								<TrendingUp className={`w-16 h-16 ${categoryInfo.color}`} />
 							</div>
 						</div>
@@ -160,19 +161,19 @@ export function BurdenScoreCard({
 
 					{/* Summary Stats */}
 					<div className="grid grid-cols-3 gap-4">
-						<div className="text-center p-4 bg-white rounded-lg border border-[#0066CC]/10">
-							<p className="text-2xl font-bold text-[#0066CC]">
+						<div className="text-center p-4 bg-white rounded-lg border border-[#5191c4]/20">
+							<p className="text-2xl font-bold text-[#5191c4]">
 								{burdenScore.visits.length}
 							</p>
 							<p className="text-xs text-gray-600 mt-1">Total Visits</p>
 						</div>
-						<div className="text-center p-4 bg-white rounded-lg border border-[#0066CC]/10">
+						<div className="text-center p-4 bg-white rounded-lg border border-[#5191c4]/20">
 							<p className="text-2xl font-bold text-gray-700">
 								{burdenScore.totalRawBurden.toFixed(1)}
 							</p>
 							<p className="text-xs text-gray-600 mt-1">Raw Burden Points</p>
 						</div>
-						<div className="text-center p-4 bg-white rounded-lg border border-[#0066CC]/10">
+						<div className="text-center p-4 bg-white rounded-lg border border-[#5191c4]/20">
 							<p className="text-2xl font-bold text-gray-700">
 								{(
 									burdenScore.totalRawBurden / burdenScore.visits.length
@@ -237,12 +238,12 @@ export function BurdenScoreCard({
 								</div>
 							</div>
 
-							<div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-								<h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+							<div className="bg-[#5191c4]/5 border border-[#5191c4]/20 rounded-lg p-4">
+								<h4 className="font-semibold text-[#5191c4] mb-2 flex items-center gap-2">
 									<Info className="w-4 h-4" />
 									How is this calculated?
 								</h4>
-								<ul className="text-sm text-blue-800 space-y-1">
+								<ul className="text-sm text-gray-700 space-y-1">
 									<li>
 										• <strong>Time on Site:</strong> Duration of each visit
 									</li>

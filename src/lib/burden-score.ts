@@ -233,27 +233,27 @@ export function getBurdenCategoryInfo(category: "low" | "medium" | "high") {
 				label: "Low Burden",
 				description:
 					"This trial schedule is manageable with minimal impact on daily life",
-				color: "text-green-600",
-				bgColor: "bg-green-50",
-				borderColor: "border-green-200",
+				color: "text-[#5191c4]",
+				bgColor: "bg-[#5191c4]/10",
+				borderColor: "border-[#5191c4]",
 			};
 		case "medium":
 			return {
 				label: "Medium Burden",
 				description:
 					"This trial requires moderate time commitment and planning",
-				color: "text-yellow-600",
-				bgColor: "bg-yellow-50",
-				borderColor: "border-yellow-200",
+				color: "text-[#8fb2ea]",
+				bgColor: "bg-[#8fb2ea]/10",
+				borderColor: "border-[#8fb2ea]",
 			};
 		case "high":
 			return {
 				label: "High Burden",
 				description:
 					"This trial is demanding and may require significant lifestyle adjustments",
-				color: "text-red-600",
-				bgColor: "bg-red-50",
-				borderColor: "border-red-200",
+				color: "text-[#beb9fe]",
+				bgColor: "bg-[#beb9fe]/10",
+				borderColor: "border-[#beb9fe]",
 			};
 	}
 }
