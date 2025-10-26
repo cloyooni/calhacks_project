@@ -17,9 +17,12 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { useGmailSendEmail } from "@/hooks/use-gmail-send-email";
+import emailjs from '@emailjs/browser';
 import type { Patient, TimeBlock } from "@/lib/types";
-import { Calendar, Clock, Plus, X } from "lucide-react";
+import { Calendar, Clock, Plus, X, Mail } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import type { SlotInfo } from "react-big-calendar";
 import { format } from "date-fns";
 
@@ -50,6 +53,11 @@ const daysOfWeek = [
 	"Sunday",
 ];
 
+// Hardcoded patient email addresses for testing
+const mockPatientEmails = [
+	"ryanvu657564@gmail.com", // Ryan Vu
+];
+
 export function CreateTimeWindowDialog({
 	open,
 	onOpenChange,
@@ -62,6 +70,8 @@ export function CreateTimeWindowDialog({
 	const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([
 		{ dayOfWeek: "Monday", startTime: "09:00", endTime: "17:00" },
 	]);
+	const [isCreating, setIsCreating] = useState(false);
+	const sendEmail = useGmailSendEmail();
 
 	// Pre-populate dates and times when a slot is selected
 	useEffect(() => {
@@ -144,16 +154,88 @@ export function CreateTimeWindowDialog({
 		);
 	};
 
-	const handleSubmit = () => {
-		// In production, this would call TimeWindowORM.insert()
-		console.log("Creating time window:", {
-			patientId: selectedPatient?.id,
-			procedureIds: selectedProcedures,
-			startDate,
-			endDate,
-			timeBlocks,
-		});
-		onOpenChange(false);
+	const sendEmailsToPatients = async () => {
+		try {
+			// Get procedure names for the email
+			const procedureNames = selectedProcedures
+				.map((id) => mockProcedures.find((p) => p.id === id)?.name)
+				.filter(Boolean)
+				.join(", ");
+
+			// Create email content
+			const emailSubject = "New Appointment Time Window Available";
+			const emailBody = `
+				<h2>New Appointment Time Window Available</h2>
+				<p>Dear Patient,</p>
+				<p>A new appointment time window has been created for the following procedures:</p>
+				<ul>
+					<li><strong>Procedures:</strong> ${procedureNames}</li>
+					<li><strong>Available Period:</strong> ${startDate} to ${endDate}</li>
+					<li><strong>Available Time Blocks:</strong> ${timeBlocks.map(block => `${block.dayOfWeek} ${block.startTime}-${block.endTime}`).join(", ")}</li>
+				</ul>
+				<p>Please log in to your patient dashboard to schedule your appointment:</p>
+				<p><a href="${window.location.origin}" style="background-color: #0066CC; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Schedule Appointment</a></p>
+				<p>Best regards,<br>Clinical Trial Team</p>
+			`;
+
+			// Send emails to all patients using EmailJS
+			console.log("Attempting to send emails to:", mockPatientEmails);
+			
+			const emailPromises = mockPatientEmails.map(async (email) => {
+				try {
+					// Send email using EmailJS (no backend needed!)
+					await emailjs.send(
+						'service_hb00nba',
+						'template_t1txlyv',
+						{
+							to_email: email,
+							subject: emailSubject,
+							message: emailBody,
+						},
+						'7aAhaDAm7axw9-yEw'
+					);
+					
+					console.log(`✅ Email sent successfully to ${email}`);
+					return { success: true };
+				} catch (error) {
+					console.error(`❌ Failed to send email to ${email}:`, error);
+					// Don't throw - just log the error
+					return { success: false, error };
+				}
+			});
+
+			await Promise.all(emailPromises);
+			
+			toast.success(`Time window created and ${mockPatientEmails.length} patients notified via email!`);
+		} catch (error) {
+			console.error("Error sending emails to patients:", error);
+			toast.error("Failed to send email notifications: " + (error instanceof Error ? error.message : "Unknown error"));
+		}
+	};
+
+	const handleSubmit = async () => {
+		setIsCreating(true);
+		
+		try {
+			// In production, this would call TimeWindowORM.insert()
+			console.log("Creating time window:", {
+				patientId: selectedPatient?.id,
+				procedureIds: selectedProcedures,
+				startDate,
+				endDate,
+				timeBlocks,
+			});
+
+			// Send emails to all patients
+			await sendEmailsToPatients();
+			
+			onOpenChange(false);
+		} catch (error) {
+			console.error("Error creating time window:", error);
+			toast.error("Failed to create time window");
+		} finally {
+			setIsCreating(false);
+		}
 	};
 
 	const totalDuration = selectedProcedures.reduce((sum, id) => {
@@ -395,10 +477,20 @@ export function CreateTimeWindowDialog({
 					</Button>
 					<Button
 						onClick={handleSubmit}
-						disabled={selectedProcedures.length === 0 || !startDate || !endDate}
+						disabled={selectedProcedures.length === 0 || !startDate || !endDate || isCreating}
 						className="bg-[#0066CC] hover:bg-[#0052A3] text-white"
 					>
-						Create Time Window
+						{isCreating ? (
+							<>
+								<Mail className="w-4 h-4 mr-2 animate-spin" />
+								Creating & Sending Emails...
+							</>
+						) : (
+							<>
+								<Mail className="w-4 h-4 mr-2" />
+								Create Time Window & Notify Patients
+							</>
+						)}
 					</Button>
 				</div>
 			</DialogContent>
