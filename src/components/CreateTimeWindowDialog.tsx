@@ -231,9 +231,8 @@ export function CreateTimeWindowDialog({
                 let d = new Date(sy, (sm || 1) - 1, sd || 1);
                 const endD = new Date(ey, (em || 1) - 1, ed || 1);
                 while (d.getTime() <= endD.getTime()) {
-                    const dow = format(d, "EEEE");
-                    const blocksForDay = timeBlocks.filter((b) => b.dayOfWeek === dow);
-                    for (const b of blocksForDay) {
+                    // Apply ALL configured blocks to every day in the range (read-only calendar spec)
+                    for (const b of timeBlocks) {
                         const [sh, smin] = b.startTime.split(":").map((n) => parseInt(n, 10));
                         const [eh, emin] = b.endTime.split(":").map((n) => parseInt(n, 10));
                         const s = new Date(d.getFullYear(), d.getMonth(), d.getDate(), sh || 0, smin || 0, 0, 0);
