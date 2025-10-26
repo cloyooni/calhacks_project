@@ -6,11 +6,11 @@ import ReactDOM from "react-dom/client";
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
 
-import reportWebVitals from "./reportWebVitals.js";
+import reportWebVitals from "./reportWebVitals";
 import "./styles.css";
 
 // Import and initialize auth integration
-import { initializeAuthIntegration } from "@/lib/auth-integration";
+// import { initializeAuthIntegration } from "@/lib/auth-integration";
 
 // Global URL parsing and variable setup
 interface GlobalAppConfig {

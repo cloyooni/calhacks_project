@@ -3,10 +3,10 @@
 
 export const GOOGLE_OAUTH_CONFIG = {
   // Replace with your actual Google OAuth client ID from Google Cloud Console
-  clientId: process.env.VITE_GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
+  clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
   
   // Replace with your actual Google OAuth client secret
-  clientSecret: process.env.VITE_GOOGLE_CLIENT_SECRET || 'YOUR_GOOGLE_CLIENT_SECRET',
+  clientSecret: import.meta.env.VITE_GOOGLE_CLIENT_SECRET || 'YOUR_GOOGLE_CLIENT_SECRET',
   
   // OAuth scopes
   scopes: [
@@ -16,7 +16,7 @@ export const GOOGLE_OAUTH_CONFIG = {
   ],
   
   // Redirect URI (should match your Google Console configuration)
-  redirectUri: process.env.VITE_GOOGLE_REDIRECT_URI || 'http://localhost:3000/auth/google/callback',
+  redirectUri: import.meta.env.VITE_GOOGLE_REDIRECT_URI || 'http://localhost:3000/auth/google/callback',
   
   // API endpoints for authentication
   endpoints: {
