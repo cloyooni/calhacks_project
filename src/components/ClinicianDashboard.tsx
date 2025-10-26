@@ -33,7 +33,6 @@ import {
 	Users,
 } from "lucide-react";
 import { useState } from "react";
-import { AIRecommendations } from "./AIRecommendations";
 import { ClinicianCalendarView } from "./ClinicianCalendarView";
 import { CreateTimeWindowDialog } from "./CreateTimeWindowDialog";
 import { PatientAppointmentsList } from "./PatientAppointmentList";
@@ -106,68 +105,50 @@ export function ClinicianDashboard() {
 			{/* Stats Overview */}
 			<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 				<Card className="border-[#2c6aa0]/20">
-					<CardHeader className="pb-3">
-						<CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-							<Users className="w-4 h-4 text-[#2c6aa0]" />
-							Total Patients
-						</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<p className="text-3xl font-bold text-[#2c6aa0]">
-							{mockPatients.length}
-						</p>
+					<CardContent className="pt-4 pb-4">
+						<div className="flex flex-col items-center text-center space-y-2">
+							<Users className="w-12 h-12 text-[#2c6aa0]" />
+							<p className="text-4xl font-bold text-[#2c6aa0]">
+								{mockPatients.length}
+							</p>
+							<p className="text-sm font-medium text-gray-600">Total Patients</p>
+						</div>
 					</CardContent>
 				</Card>
 
 				<Card className="border-[#5191c4]/20">
-					<CardHeader className="pb-3">
-						<CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-							<Calendar className="w-4 h-4 text-[#5191c4]" />
-							Upcoming Appointments
-						</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<p className="text-3xl font-bold text-[#5191c4]">12</p>
+					<CardContent className="pt-4 pb-4">
+						<div className="flex flex-col items-center text-center space-y-2">
+							<Calendar className="w-12 h-12 text-[#5191c4]" />
+							<p className="text-4xl font-bold text-[#5191c4]">12</p>
+							<p className="text-sm font-medium text-gray-600">Upcoming Appointments</p>
+						</div>
 					</CardContent>
 				</Card>
 
 				<Card className="border-[#8fb2ea]/20">
-					<CardHeader className="pb-3">
-						<CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-							<Clock className="w-4 h-4 text-[#8fb2ea]" />
-							Open Time Windows
-						</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<p className="text-3xl font-bold text-[#8fb2ea]">8</p>
+					<CardContent className="pt-4 pb-4">
+						<div className="flex flex-col items-center text-center space-y-2">
+							<Clock className="w-12 h-12 text-[#8fb2ea]" />
+							<p className="text-4xl font-bold text-[#8fb2ea]">8</p>
+							<p className="text-sm font-medium text-gray-600">Open Time Windows</p>
+						</div>
 					</CardContent>
 				</Card>
 
 				<Card className="border-[#beb9fe]/20">
-					<CardHeader className="pb-3">
-						<CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-							<CheckCircle2 className="w-4 h-4 text-[#beb9fe]" />
-							Completed Today
-						</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<p className="text-3xl font-bold text-[#beb9fe]">5</p>
+					<CardContent className="pt-4 pb-4">
+						<div className="flex flex-col items-center text-center space-y-2">
+							<CheckCircle2 className="w-12 h-12 text-[#beb9fe]" />
+							<p className="text-4xl font-bold text-[#beb9fe]">5</p>
+							<p className="text-sm font-medium text-gray-600">Completed Today</p>
+						</div>
 					</CardContent>
 				</Card>
 			</div>
 
-			{/* AI Recommendations */}
-			<AIRecommendations />
-
 			{/* Procedure Manager */}
 			<ProcedureManagerWidget />
-
-			{/* Burden Score (moved from patient to clinician dashboard) */}
-			<BurdenScoreCard
-				appointments={mockPatientAppointments}
-				travelMinutes={60}
-				windowDays={3}
-			/>
 
 			{/* View Tabs - Calendar vs List */}
 			<Tabs defaultValue="list" className="w-full">
@@ -347,6 +328,13 @@ export function ClinicianDashboard() {
 					<ClinicianCalendarView />
 				</TabsContent>
 			</Tabs>
+
+			{/* Burden Score (moved from patient to clinician dashboard) */}
+			<BurdenScoreCard
+				appointments={mockPatientAppointments}
+				travelMinutes={60}
+				windowDays={3}
+			/>
 
 			{/* Create Time Window Dialog */}
 			<CreateTimeWindowDialog
