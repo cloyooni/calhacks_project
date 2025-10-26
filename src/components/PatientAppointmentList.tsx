@@ -49,11 +49,11 @@ export function PatientAppointmentsList({
 			{appointments.map((appointment) => (
 				<div
 					key={appointment.id}
-					className="flex items-center justify-between p-3 bg-[#E6F2FF]/30 rounded-lg border border-[#0066CC]/10"
+					className="flex items-center justify-between p-3 bg-[#E6F2FF]/30 rounded-lg border border-[#5191c4]/10"
 				>
 					<div className="flex items-center gap-3">
-						<div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center border border-[#0066CC]/20">
-							<Calendar className="w-4 h-4 text-[#0066CC]" />
+						<div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center border border-[#5191c4]/20">
+							<Calendar className="w-4 h-4 text-[#5191c4]" />
 						</div>
 						<div>
 							<p className="text-sm font-medium text-gray-900">

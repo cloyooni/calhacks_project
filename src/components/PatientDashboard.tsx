@@ -28,7 +28,6 @@ import {
 	Clock,
 	Download,
 	List,
-	MapPin,
 	Share2,
 	XCircle,
 } from "lucide-react";
@@ -40,42 +39,20 @@ const mockUpcomingAppointments = [
 	{
 		id: "1",
 		procedureNames: ["Blood Draw", "Vital Signs"],
-		scheduledDate: "2025-01-28T10:00:00Z",
-		location: "Building A, Room 201",
-		durationMinutes: 45,
+		scheduledDate: "2025-10-27T09:00:00Z",
+		durationMinutes: 30,
 		status: AppointmentStatus.Scheduled,
 	},
 	{
 		id: "2",
 		procedureNames: ["ECG", "Questionnaire"],
-		scheduledDate: "2025-02-05T14:30:00Z",
-		location: "Building B, Room 105",
-		durationMinutes: 60,
-		status: AppointmentStatus.Scheduled,
-	},
-];
-
-const mockOpenTimeWindows = [
-	{
-		id: "1",
-		procedureNames: ["MRI Scan"],
-		startDate: "2025-02-10T00:00:00Z",
-		endDate: "2025-02-14T00:00:00Z",
-		availableSlots: 8,
-	},
-	{
-		id: "2",
-		procedureNames: ["Blood Draw", "Physical Exam"],
-		startDate: "2025-02-20T00:00:00Z",
-		endDate: "2025-02-22T00:00:00Z",
-		availableSlots: 12,
+		scheduledDate: "2025-10-23T12:00:00Z",
+		durationMinutes: 45,
+		status: AppointmentStatus.Completed,
 	},
 ];
 
 export function PatientDashboard() {
-	const [selectedTimeWindow, setSelectedTimeWindow] = useState<string | null>(
-		null,
-	);
 
 	const completionPercentage = 45;
 	const completedProcedures = 9;
@@ -121,7 +98,7 @@ export function PatientDashboard() {
 
 						<div className="grid grid-cols-3 gap-4 pt-4">
 							<div className="text-center p-3 bg-white rounded-lg border border-[#5191c4]/10">
-								<p className="text-2xl font-bold text-green-600">
+								<p className="text-2xl font-bold text-[#5191c4]">
 									{completedProcedures}
 								</p>
 								<p className="text-xs text-gray-600 mt-1">Completed</p>
@@ -131,7 +108,7 @@ export function PatientDashboard() {
 								<p className="text-xs text-gray-600 mt-1">Upcoming</p>
 							</div>
 							<div className="text-center p-3 bg-white rounded-lg border border-[#5191c4]/10">
-								<p className="text-2xl font-bold text-gray-600">
+								<p className="text-2xl font-bold text-[#5191c4]">
 									{totalProcedures - completedProcedures}
 								</p>
 								<p className="text-xs text-gray-600 mt-1">Remaining</p>
@@ -231,8 +208,6 @@ export function PatientDashboard() {
 															{appointment.durationMinutes} min
 														</div>
 														<div className="flex items-center gap-1">
-															<MapPin className="w-4 h-4" />
-															{appointment.location}
 														</div>
 													</div>
 												</div>
@@ -263,72 +238,6 @@ export function PatientDashboard() {
 									<div className="text-center py-8 text-gray-500">
 										<Calendar className="w-12 h-12 mx-auto mb-3 opacity-50" />
 										<p>No upcoming appointments scheduled</p>
-									</div>
-								)}
-							</div>
-						</CardContent>
-					</Card>
-
-					{/* Available Time Windows */}
-					<Card className="border-[#5191c4]/20">
-						<CardHeader>
-							<CardTitle className="text-xl text-gray-900 flex items-center gap-2">
-								<Clock className="w-5 h-5 text-[#5191c4]" />
-								Available Time Windows
-							</CardTitle>
-							<CardDescription>
-								Select a time that works best for you
-							</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<div className="space-y-3">
-								{mockOpenTimeWindows.map((window) => (
-									<Card
-										key={window.id}
-										className={`border-[#5191c4]/20 cursor-pointer transition-all ${
-											selectedTimeWindow === window.id
-												? "ring-2 ring-[#5191c4] bg-[#E6F2FF]/30"
-												: "hover:border-[#5191c4]/40"
-										}`}
-										onClick={() => setSelectedTimeWindow(window.id)}
-									>
-										<CardContent className="p-4">
-											<div className="flex items-center justify-between">
-												<div className="flex-1">
-													<h3 className="font-semibold text-gray-900 mb-1">
-														{window.procedureNames.join(", ")}
-													</h3>
-													<p className="text-sm text-gray-600 mb-2">
-														Available: {formatDateTime(window.startDate)} -{" "}
-														{formatDateTime(window.endDate)}
-													</p>
-													<Badge className="bg-green-50 text-green-700 hover:bg-green-100">
-														{window.availableSlots} slots available
-													</Badge>
-												</div>
-
-												<Button
-													className="bg-[#5191c4] hover:bg-[#6397d5] text-white"
-													onClick={(e) => {
-														e.stopPropagation();
-														// Open scheduling dialog
-													}}
-												>
-													<Calendar className="w-4 h-4 mr-2" />
-													Book Appointment
-												</Button>
-											</div>
-										</CardContent>
-									</Card>
-								))}
-
-								{mockOpenTimeWindows.length === 0 && (
-									<div className="text-center py-8 text-gray-500">
-										<Clock className="w-12 h-12 mx-auto mb-3 opacity-50" />
-										<p>No available time windows at the moment</p>
-										<p className="text-sm mt-1">
-											Check back soon for new scheduling options
-										</p>
 									</div>
 								)}
 							</div>

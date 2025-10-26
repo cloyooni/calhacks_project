@@ -367,18 +367,25 @@ export function ClinicianCalendarView() {
                 setDate(d);
             }
         };
+        // Check if today
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const viewDate = new Date(date);
+        viewDate.setHours(0, 0, 0, 0);
+        const isToday = viewDate.getTime() === today.getTime();
+        
         return (
             <div className="flex items-center justify-between mb-4 gap-2">
                 <div className="flex items-center gap-2">
-                    <button className="bg-white border border-[#0066CC]/30 text-[#0066CC] px-3 py-2 rounded" onClick={goToday}>Today</button>
-                    <button className="bg-white border border-[#0066CC]/30 text-[#0066CC] px-3 py-2 rounded" onClick={goPrev}>Prev</button>
-                    <button className="bg-white border border-[#0066CC]/30 text-[#0066CC] px-3 py-2 rounded" onClick={goNext}>Next</button>
+                    <button className="bg-white border border-[#5191c4]/30 text-[#5191c4] px-3 py-2 rounded" onClick={goPrev}>Prev</button>
+                    <button className={`border px-3 py-2 rounded ${isToday ? "bg-[#5191c4] text-white border-[#3b7ca8]" : "bg-white border-[#5191c4]/30 text-[#5191c4]"}`} onClick={goToday}>Today</button>
+                    <button className="bg-white border border-[#5191c4]/30 text-[#5191c4] px-3 py-2 rounded" onClick={goNext}>Next</button>
                 </div>
-                <div className="font-semibold text-[#0066CC]">{label}</div>
+                <div className="font-semibold text-[#5191c4]">{label}</div>
                 <div className="flex items-center gap-2">
-                    <button className={`px-3 py-2 rounded border ${view === "month" ? "bg-[#0066CC] text-white border-[#0052A3]" : "bg-white border-[#0066CC]/30 text-[#0066CC]"}`} onClick={() => setView("month")}>Month</button>
-                    <button className={`px-3 py-2 rounded border ${view === "week" ? "bg-[#0066CC] text-white border-[#0052A3]" : "bg-white border-[#0066CC]/30 text-[#0066CC]"}`} onClick={() => setView("week")}>Week</button>
-                    <button className={`px-3 py-2 rounded border ${view === "day" ? "bg-[#0066CC] text-white border-[#0052A3]" : "bg-white border-[#0066CC]/30 text-[#0066CC]"}`} onClick={() => setView("day")}>Day</button>
+                    <button className={`px-3 py-2 rounded border ${view === "month" ? "bg-[#5191c4] text-white border-[#3b7ca8]" : "bg-white border-[#5191c4]/30 text-[#5191c4]"}`} onClick={() => setView("month")}>Month</button>
+                    <button className={`px-3 py-2 rounded border ${view === "week" ? "bg-[#5191c4] text-white border-[#3b7ca8]" : "bg-white border-[#5191c4]/30 text-[#5191c4]"}`} onClick={() => setView("week")}>Week</button>
+                    <button className={`px-3 py-2 rounded border ${view === "day" ? "bg-[#5191c4] text-white border-[#3b7ca8]" : "bg-white border-[#5191c4]/30 text-[#5191c4]"}`} onClick={() => setView("day")}>Day</button>
                 </div>
             </div>
         );
@@ -407,11 +414,11 @@ export function ClinicianCalendarView() {
         });
 
         return (
-            <div className="border border-[#0066CC]/20 rounded-md overflow-hidden">
+            <div className="border border-[#5191c4]/20 rounded-md overflow-hidden">
                 <div className="grid" style={{ gridTemplateColumns: `80px repeat(${days.length}, 1fr)` }}>
-                    <div className="bg-white border-b border-[#0066CC]/20" />
+                    <div className="bg-white border-b border-[#5191c4]/20" />
                     {days.map((d, idx) => (
-                        <div key={idx} className="bg-white border-b border-l border-[#0066CC]/20 px-2 py-2 text-sm font-medium text-[#0066CC]">
+                        <div key={idx} className="bg-white border-b border-l border-[#5191c4]/20 px-2 py-2 text-sm font-medium text-[#5191c4]">
                             {colHeader(d)}
                         </div>
                     ))}
@@ -419,16 +426,16 @@ export function ClinicianCalendarView() {
                 <div className="grid" style={{ gridTemplateColumns: `80px repeat(${days.length}, 1fr)` }}>
                     <div className="relative">
                         {hours.map((h) => (
-                            <div key={h} className="h-12 border-t border-[#0066CC]/10 text-xs text-gray-500 pr-2 flex items-start justify-end pt-1">
+                            <div key={h} className="h-12 border-t border-[#5191c4]/10 text-xs text-gray-500 pr-2 flex items-start justify-end pt-1">
                                 {new Date(1970, 0, 1, h).toLocaleTimeString("en-US", { hour: "numeric" })}
                             </div>
                         ))}
                     </div>
                     {days.map((d, col) => (
-                        <div key={col} className="relative border-l border-[#0066CC]/10">
+                        <div key={col} className="relative border-l border-[#5191c4]/10">
                             <div className="absolute inset-0">
                                 {hours.map((h) => (
-                                    <div key={h} className="h-12 border-t border-[#0066CC]/10" />
+                                    <div key={h} className="h-12 border-t border-[#5191c4]/10" />
                                 ))}
                             </div>
                             <div className="relative" style={{ height: `${hours.length * 48}px` }}>
@@ -550,8 +557,8 @@ export function ClinicianCalendarView() {
 		const isTimeWindow = event.resource?.type === "time_window";
 		const status = event.resource?.status;
 
-		let backgroundColor = "#0066CC";
-		let borderColor = "#0052A3";
+		let backgroundColor = "#5191c4";
+		let borderColor = "#3b7ca8";
 
 		if (isTimeWindow) {
 			if (status === TimeWindowStatus.Open) {
@@ -562,10 +569,10 @@ export function ClinicianCalendarView() {
 				borderColor = "#d97706";
 			}
 		} else {
-			// Appointment
-			if (status === AppointmentStatus.Completed) {
-				backgroundColor = "#10b981";
-				borderColor = "#059669";
+		// Appointment
+		if (status === AppointmentStatus.Completed) {
+			backgroundColor = "#5191c4";
+			borderColor = "#3b7ca8";
 			} else if (status === AppointmentStatus.Cancelled) {
 				backgroundColor = "#9ca3af";
 				borderColor = "#6b7280";
@@ -592,12 +599,12 @@ export function ClinicianCalendarView() {
 	return (
 		<div className="space-y-6">
 			{/* Calendar View */}
-			<Card className="border-[#0066CC]/20">
+			<Card className="border-[#5191c4]/20">
 				<CardHeader>
 					<div className="flex items-center justify-between">
 						<div>
 							<CardTitle className="text-xl text-gray-900 flex items-center gap-2">
-								<CalendarIcon className="w-5 h-5 text-[#0066CC]" />
+								<CalendarIcon className="w-5 h-5 text-[#5191c4]" />
 								Appointment Calendar
 							</CardTitle>
 							<CardDescription>
@@ -606,7 +613,7 @@ export function ClinicianCalendarView() {
 						</div>
 						<div className="flex items-center gap-2">
 							<button
-								className="bg-[#0066CC] text-white rounded-md px-4 py-2"
+								className="bg-[#5191c4] text-white rounded-md px-4 py-2"
 								onClick={() => setShowCreateWindow(true)}
 							>
 								Create Time Window
@@ -649,7 +656,7 @@ export function ClinicianCalendarView() {
 
 			{/* Event Details Panel */}
 			{selectedEvent && (
-				<Card className="border-[#0066CC]/20">
+				<Card className="border-[#5191c4]/20">
 					<CardHeader>
 						<CardTitle className="text-lg text-gray-900">
 							Event Details
@@ -697,7 +704,7 @@ export function ClinicianCalendarView() {
 											{selectedEvent.resource.procedureNames?.map((name) => (
 												<Badge
 													key={name}
-													className="bg-[#0066CC]/10 text-[#0066CC]"
+													className="bg-[#5191c4]/10 text-[#5191c4]"
 												>
 													{name}
 												</Badge>
