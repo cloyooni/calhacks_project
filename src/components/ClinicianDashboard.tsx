@@ -205,7 +205,7 @@ export function ClinicianDashboard() {
 									<Button
 										onClick={() => setShowAddPatient(true)}
 										variant="outline"
-										className="border-[#0066CC] text-[#0066CC] hover:bg-[#0066CC] hover:text-white"
+										className="border-[#5191c4] text-[#5191c4] hover:bg-[#5191c4] hover:text-white"
 									>
 										<Users className="w-4 h-4 mr-2" />
 										Add Patient
@@ -213,7 +213,7 @@ export function ClinicianDashboard() {
 									<Button
 										onClick={() => setShowCreateWindow(true)}
 										variant="outline"
-										className="border-[#0066CC] text-[#0066CC] hover:bg-[#0066CC] hover:text-white"
+										className="border-[#5191c4] text-[#5191c4] hover:bg-[#5191c4] hover:text-white"
 									>
 										<Plus className="w-4 h-4 mr-2" />
 										Create Time Window
