@@ -149,8 +149,30 @@ export function getAppointmentStatusColor(status: AppointmentStatus): string {
 }
 
 // Date formatting helpers
+// Parse an ISO-like string as local wall time to avoid timezone shifts in time-grid views
+function parseLocal(dateInput: string | Date): Date {
+	if (dateInput instanceof Date) return dateInput;
+	const s = dateInput;
+	// Match YYYY-MM-DDTHH:mm[:ss][Z or offset]
+	const m = s.match(/^(\d{4})-(\d{2})-(\d{2})[T\s](\d{2}):(\d{2})(?::(\d{2}))?/);
+	if (m) {
+		const [, y, mo, d, h, mi, se] = m;
+		return new Date(
+			Number(y),
+			Number(mo) - 1,
+			Number(d),
+			Number(h),
+			Number(mi),
+			se ? Number(se) : 0,
+			0,
+		);
+	}
+	// Fallback
+	return new Date(s);
+}
+
 export function formatDate(dateString: string): string {
-	const date = new Date(dateString);
+	const date = parseLocal(dateString);
 	return date.toLocaleDateString("en-US", {
 		year: "numeric",
 		month: "short",
@@ -159,7 +181,7 @@ export function formatDate(dateString: string): string {
 }
 
 export function formatDateTime(dateString: string): string {
-	const date = new Date(dateString);
+	const date = parseLocal(dateString);
 	return date.toLocaleString("en-US", {
 		year: "numeric",
 		month: "short",
@@ -171,7 +193,7 @@ export function formatDateTime(dateString: string): string {
 }
 
 export function formatTimeOnly(dateString: string): string {
-	const date = new Date(dateString);
+	const date = parseLocal(dateString);
 	return date.toLocaleTimeString("en-US", {
 		hour: "numeric",
 		minute: "2-digit",
@@ -199,7 +221,7 @@ export interface CalendarEvent {
 export function appointmentToCalendarEvent(
 	appointment: AppointmentWithDetails,
 ): CalendarEvent {
-	const start = new Date(appointment.scheduled_date);
+	const start = parseLocal(appointment.scheduled_date);
 	const end = new Date(
 		start.getTime() + (appointment.duration_minutes || 60) * 60000,
 	);
@@ -232,8 +254,8 @@ export function timeWindowToCalendarEvent(
 	timeWindow: TimeWindow,
 	patientName?: string,
 ): CalendarEvent {
-	const start = new Date(timeWindow.start_date);
-	const end = new Date(timeWindow.end_date);
+	const start = parseLocal(timeWindow.start_date as unknown as string);
+	const end = parseLocal(timeWindow.end_date as unknown as string);
 
 	return {
 		id: timeWindow.id,

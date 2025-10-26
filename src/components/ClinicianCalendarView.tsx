@@ -15,7 +15,6 @@ import {
 	formatDateTime,
 	getAppointmentStatusColor,
 	getAppointmentStatusLabel,
-	timeWindowToCalendarEvent,
 } from "@/lib/types";
 import { addDays, format, getDay, parse, startOfWeek } from "date-fns";
 import { Calendar as CalendarIcon, Clock, MapPin } from "lucide-react";
@@ -26,6 +25,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { enUS } from "date-fns/locale";
 import { CreateTimeWindowDialog } from "./CreateTimeWindowDialog";
 import "@/styles/calendar.css";
+import { toast } from "sonner";
 
 const locales = {
 	"en-US": enUS,
@@ -313,6 +313,157 @@ export function ClinicianCalendarView() {
 		return Array.from(root.querySelectorAll(".rbc-day-slot")) as HTMLElement[];
 	}, []);
 
+    const Toolbar = ({
+        date,
+        setDate,
+        view,
+        setView,
+    }: { date: Date; setDate: (d: Date) => void; view: View; setView: (v: View) => void }) => {
+        const label = useMemo(() => {
+            const options: Intl.DateTimeFormatOptions = view === "month"
+                ? { year: "numeric", month: "long" }
+                : view === "week"
+                ? { year: "numeric", month: "short", day: "numeric" }
+                : { year: "numeric", month: "short", day: "numeric" };
+            if (view === "week") {
+                const start = startOfWeek(date, { weekStartsOn: 0, locale: enUS });
+                const end = addDays(start, 6);
+                return `${start.toLocaleDateString("en-US", { month: "short", day: "numeric" })} – ${end.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`;
+            }
+            return date.toLocaleDateString("en-US", options);
+        }, [date, view]);
+        const goToday = () => {
+            const t = new Date();
+            t.setHours(0, 0, 0, 0);
+            setDate(t);
+        };
+        const goPrev = () => {
+            if (view === "month") {
+                const d = new Date(date.getFullYear(), date.getMonth() - 1, 1);
+                d.setHours(0, 0, 0, 0);
+                setDate(d);
+            } else if (view === "day") {
+                const d = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1);
+                d.setHours(0, 0, 0, 0);
+                setDate(d);
+            } else {
+                const d = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 7);
+                d.setHours(0, 0, 0, 0);
+                setDate(d);
+            }
+        };
+        const goNext = () => {
+            if (view === "month") {
+                const d = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+                d.setHours(0, 0, 0, 0);
+                setDate(d);
+            } else if (view === "day") {
+                const d = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
+                d.setHours(0, 0, 0, 0);
+                setDate(d);
+            } else {
+                const d = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 7);
+                d.setHours(0, 0, 0, 0);
+                setDate(d);
+            }
+        };
+        return (
+            <div className="flex items-center justify-between mb-4 gap-2">
+                <div className="flex items-center gap-2">
+                    <button className="bg-white border border-[#0066CC]/30 text-[#0066CC] px-3 py-2 rounded" onClick={goToday}>Today</button>
+                    <button className="bg-white border border-[#0066CC]/30 text-[#0066CC] px-3 py-2 rounded" onClick={goPrev}>Prev</button>
+                    <button className="bg-white border border-[#0066CC]/30 text-[#0066CC] px-3 py-2 rounded" onClick={goNext}>Next</button>
+                </div>
+                <div className="font-semibold text-[#0066CC]">{label}</div>
+                <div className="flex items-center gap-2">
+                    <button className={`px-3 py-2 rounded border ${view === "month" ? "bg-[#0066CC] text-white border-[#0052A3]" : "bg-white border-[#0066CC]/30 text-[#0066CC]"}`} onClick={() => setView("month")}>Month</button>
+                    <button className={`px-3 py-2 rounded border ${view === "week" ? "bg-[#0066CC] text-white border-[#0052A3]" : "bg-white border-[#0066CC]/30 text-[#0066CC]"}`} onClick={() => setView("week")}>Week</button>
+                    <button className={`px-3 py-2 rounded border ${view === "day" ? "bg-[#0066CC] text-white border-[#0052A3]" : "bg-white border-[#0066CC]/30 text-[#0066CC]"}`} onClick={() => setView("day")}>Day</button>
+                </div>
+            </div>
+        );
+    };
+
+    const TimeGrid = ({
+        mode,
+        date,
+        events,
+    }: { mode: "week" | "day"; date: Date; events: CalendarEvent[] }) => {
+        const START_HOUR = 7;
+        const END_HOUR = 18; // exclusive end label at 6pm
+        const hours = Array.from({ length: END_HOUR - START_HOUR + 1 }, (_, i) => START_HOUR + i);
+        const dayStart = mode === "week" ? startOfWeek(date, { weekStartsOn: 0, locale: enUS }) : new Date(date);
+        if (mode === "day") dayStart.setHours(0, 0, 0, 0);
+        const days = mode === "week" ? Array.from({ length: 7 }, (_, i) => addDays(dayStart, i)) : [new Date(date.getFullYear(), date.getMonth(), date.getDate())];
+        const minutesInView = (END_HOUR - START_HOUR) * 60;
+        const colHeader = (d: Date) => d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+
+        const eventsByDay = days.map((d) => {
+            const y = d.getFullYear(), m = d.getMonth(), da = d.getDate();
+            return events.filter((ev) => {
+                const sy = ev.start.getFullYear(), sm = ev.start.getMonth(), sd = ev.start.getDate();
+                return sy === y && sm === m && sd === da;
+            });
+        });
+
+        return (
+            <div className="border border-[#0066CC]/20 rounded-md overflow-hidden">
+                <div className="grid" style={{ gridTemplateColumns: `80px repeat(${days.length}, 1fr)` }}>
+                    <div className="bg-white border-b border-[#0066CC]/20" />
+                    {days.map((d, idx) => (
+                        <div key={idx} className="bg-white border-b border-l border-[#0066CC]/20 px-2 py-2 text-sm font-medium text-[#0066CC]">
+                            {colHeader(d)}
+                        </div>
+                    ))}
+                </div>
+                <div className="grid" style={{ gridTemplateColumns: `80px repeat(${days.length}, 1fr)` }}>
+                    <div className="relative">
+                        {hours.map((h) => (
+                            <div key={h} className="h-12 border-t border-[#0066CC]/10 text-xs text-gray-500 pr-2 flex items-start justify-end pt-1">
+                                {new Date(1970, 0, 1, h).toLocaleTimeString("en-US", { hour: "numeric" })}
+                            </div>
+                        ))}
+                    </div>
+                    {days.map((d, col) => (
+                        <div key={col} className="relative border-l border-[#0066CC]/10">
+                            <div className="absolute inset-0">
+                                {hours.map((h) => (
+                                    <div key={h} className="h-12 border-t border-[#0066CC]/10" />
+                                ))}
+                            </div>
+                            <div className="relative" style={{ height: `${hours.length * 48}px` }}>
+                                {eventsByDay[col].map((ev) => {
+                                    const mStartAbs = ev.start.getHours() * 60 + ev.start.getMinutes();
+                                    const mEndAbs = ev.end.getHours() * 60 + ev.end.getMinutes();
+                                    const windowStart = START_HOUR * 60;
+                                    const windowEnd = END_HOUR * 60;
+                                    const clampedStart = Math.max(mStartAbs, windowStart);
+                                    const clampedEnd = Math.min(mEndAbs, windowEnd);
+                                    if (clampedEnd <= clampedStart) return null; // out of visible window
+                                    const topPct = ((clampedStart - windowStart) / minutesInView) * 100;
+                                    const heightPct = Math.max(((clampedEnd - clampedStart) / minutesInView) * 100, (15 / minutesInView) * 100);
+                                    const isTimeWindow = ev.resource?.type === "time_window";
+                                    const bg = isTimeWindow ? "bg-green-500" : "bg-blue-600";
+                                    const border = isTimeWindow ? "border-green-600" : "border-blue-700";
+                                    return (
+                                        <div key={ev.id} className={`absolute left-2 right-2 ${bg} ${border} border rounded-md text-white text-xs px-2 py-1 shadow`}
+                                            style={{ top: `${topPct}%`, height: `${heightPct}%` }}
+                                        >
+                                            <div className="font-medium truncate">{ev.title}</div>
+                                            <div className="opacity-90">
+                                                {format(ev.start, 'h:mm a')} – {format(ev.end, 'h:mm a')}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    };
+
 	// After dialog creates a time window, persist the selection as highlighted events (per-day when multi-day)
 	const handleTimeWindowCreated = useCallback((payload: { start: Date; end: Date; slots?: Date[] }) => {
 		const selectedStart = payload.start;
@@ -343,7 +494,7 @@ export function ClinicianCalendarView() {
 					end,
 					allDay: false,
 					resource: {
-						type: "time_window",
+						type: "time_window" as const,
 						data: {
 							id,
 							start_date: start.toISOString(),
@@ -374,7 +525,7 @@ export function ClinicianCalendarView() {
 				end,
 				allDay: false,
 				resource: {
-					type: "time_window",
+					type: "time_window" as const,
 					data: {
 						id,
 						start_date: start.toISOString(),
@@ -464,27 +615,34 @@ export function ClinicianCalendarView() {
 					</div>
 				</CardHeader>
 				<CardContent>
-					<div className="h-[600px] relative" ref={calendarWrapperRef}>
-						<Calendar
-							localizer={localizer}
-							events={events}
-							startAccessor="start"
-							endAccessor="end"
-							min={new Date(1970, 0, 1, 0, 0, 0)}
-							max={new Date(1970, 0, 1, 23, 59, 59)}
-							scrollToTime={new Date(1970, 0, 1, 8, 0, 0)}
-							selectable={false}
-							eventPropGetter={eventStyleGetter}
-							views={["month", "week", "day"]}
-							showMultiDayTimes
-							view={currentView}
-							onView={(v) => setCurrentView(v)}
-							date={currentDate}
-							onNavigate={(d) => setCurrentDate(d)}
-							step={15}
-							timeslots={4}
-							className="trialflow-calendar"
-						/>
+					<div className="h-[600px]" ref={calendarWrapperRef}>
+                        <Toolbar date={currentDate} setDate={setCurrentDate} view={currentView} setView={setCurrentView} />
+                        {currentView === "month" ? (
+                            <div className="h-[520px] relative">
+                                <Calendar
+                                    localizer={localizer}
+                                    events={events}
+                                    startAccessor="start"
+                                    endAccessor="end"
+                                    selectable={false}
+                                    eventPropGetter={eventStyleGetter}
+                                    views={["month"]}
+                                    view="month"
+                                    date={currentDate}
+                                    onNavigate={(d) => setCurrentDate(d)}
+                                    className="trialflow-calendar"
+                                    components={{ toolbar: () => null as any }}
+                                />
+                            </div>
+                        ) : currentView === "week" ? (
+                            <div className="h-[520px] overflow-auto">
+                                <TimeGrid mode="week" date={currentDate} events={events} />
+                            </div>
+                        ) : (
+                            <div className="h-[520px] overflow-auto">
+                                <TimeGrid mode="day" date={currentDate} events={events} />
+                            </div>
+                        )}
 					</div>
 				</CardContent>
 			</Card>
@@ -592,18 +750,20 @@ export function ClinicianCalendarView() {
 				selectedSlot={selectedSlot}
 				onCreated={(ranges) => {
 					const baseId = `tw-${Date.now()}`;
-					console.log('Creating time windows from ranges:', ranges);
-					const newEvents: CalendarEvent[] = ranges.map((r, idx): CalendarEvent => {
+					const existingWindows = createdTimeWindows.filter((e) => e.resource?.type === "time_window");
+					const overlaps = ranges.filter((r) => existingWindows.some((ev) => r.end > ev.start && r.start < ev.end));
+					const allowed = ranges.filter((r) => !existingWindows.some((ev) => r.end > ev.start && r.start < ev.end));
+					const newEvents: CalendarEvent[] = allowed.map((r, idx): CalendarEvent => {
 						const startTime = format(r.start, 'h:mm a');
 						const endTime = format(r.end, 'h:mm a');
-						const event = {
+						const event: CalendarEvent = {
 							id: `${baseId}-${idx}`,
 							title: `${startTime} - ${endTime}`,
 							start: r.start,
 							end: r.end,
 							allDay: false,
 							resource: {
-								type: "time_window",
+								type: "time_window" as const,
 								data: {
 									id: `${baseId}-${idx}`,
 									start_date: r.start.toISOString(),
@@ -622,6 +782,9 @@ export function ClinicianCalendarView() {
 						return event;
 					});
 					setCreatedTimeWindows((prev) => [...prev, ...newEvents]);
+					if (overlaps.length > 0) {
+						toast.warning(`${overlaps.length} selection${overlaps.length > 1 ? "s were" : " was"} skipped due to overlap with existing windows.`);
+					}
 				}}
 			/>
 		</div>
