@@ -28,16 +28,13 @@ import {
 	CheckCircle2,
 	Clock,
 	List,
-	Plus,
 	Search,
 	Users,
 } from "lucide-react";
 import { useState } from "react";
 import { ClinicianCalendarView } from "./ClinicianCalendarView";
-import { CreateTimeWindowDialog } from "./CreateTimeWindowDialog";
 import { PatientAppointmentsList } from "./PatientAppointmentList";
 import { BurdenScoreCard } from "./BurdenScoreCard";
-import { ProcedureManagerWidget } from "./ProcedureManagerWidget";
 import { AddPatientDialog } from "./AddPatientDialog";
 import { mockPatientAppointments } from "@/lib/mock-data";
 
@@ -63,7 +60,6 @@ export function ClinicianDashboard() {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [phaseFilter, setPhaseFilter] = useState<string>("all");
 	const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
-	const [showCreateWindow, setShowCreateWindow] = useState(false);
 	const [showAddPatient, setShowAddPatient] = useState(false);
 	const [patients, setPatients] = useState<Patient[]>(mockPatients);
 
@@ -148,7 +144,7 @@ export function ClinicianDashboard() {
 			</div>
 
 			{/* Procedure Manager */}
-			<ProcedureManagerWidget />
+			{/* <ProcedureManagerWidget /> */}
 
 			{/* View Tabs - Calendar vs List */}
 			<Tabs defaultValue="list" className="w-full">
@@ -190,14 +186,6 @@ export function ClinicianDashboard() {
 									>
 										<Users className="w-4 h-4 mr-2" />
 										Add Patient
-									</Button>
-									<Button
-										onClick={() => setShowCreateWindow(true)}
-										variant="outline"
-										className="border-[#5191c4] text-[#5191c4] hover:bg-[#5191c4] hover:text-white"
-									>
-										<Plus className="w-4 h-4 mr-2" />
-										Create Time Window
 									</Button>
 								</div>
 							</div>
@@ -287,19 +275,6 @@ export function ClinicianDashboard() {
 															</span>
 														</div>
 													</div>
-
-													<Button
-														variant="outline"
-														size="sm"
-														className="border-[#5191c4] text-[#5191c4] hover:bg-[#5191c4] hover:text-white"
-														onClick={(e) => {
-															e.stopPropagation();
-															setSelectedPatient(patient);
-															setShowCreateWindow(true);
-														}}
-													>
-														Schedule
-													</Button>
 												</div>
 											</div>
 
@@ -334,13 +309,6 @@ export function ClinicianDashboard() {
 				appointments={mockPatientAppointments}
 				travelMinutes={60}
 				windowDays={3}
-			/>
-
-			{/* Create Time Window Dialog */}
-			<CreateTimeWindowDialog
-				open={showCreateWindow}
-				onOpenChange={setShowCreateWindow}
-				selectedPatient={selectedPatient}
 			/>
 
 			{/* Add Patient Dialog */}
