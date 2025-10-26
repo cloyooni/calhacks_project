@@ -38,6 +38,8 @@ import { ClinicianCalendarView } from "./ClinicianCalendarView";
 import { CreateTimeWindowDialog } from "./CreateTimeWindowDialog";
 import { PatientAppointmentsList } from "./PatientAppointmentList";
 import { BurdenScoreCard } from "./BurdenScoreCard";
+import { ProcedureManagerWidget } from "./ProcedureManagerWidget";
+import { AddPatientDialog } from "./AddPatientDialog";
 import { mockPatientAppointments } from "@/lib/mock-data";
 
 // Mock data for demonstration - in production, this would come from ORM
@@ -63,8 +65,30 @@ export function ClinicianDashboard() {
 	const [phaseFilter, setPhaseFilter] = useState<string>("all");
 	const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 	const [showCreateWindow, setShowCreateWindow] = useState(false);
+	const [showAddPatient, setShowAddPatient] = useState(false);
+	const [patients, setPatients] = useState<Patient[]>(mockPatients);
 
-	const filteredPatients = mockPatients.filter((patient) => {
+	const handleAddPatient = (patientData: Omit<Patient, "id" | "data_creator" | "data_updater" | "create_time" | "update_time">) => {
+		// Generate a unique ID
+		const newId = (patients.length + 1).toString();
+		const currentTimestamp = Math.floor(Date.now() / 1000).toString();
+		
+		const newPatient: Patient = {
+			id: newId,
+			data_creator: "clinician1",
+			data_updater: "clinician1",
+			create_time: currentTimestamp,
+			update_time: currentTimestamp,
+			...patientData,
+		};
+		
+		setPatients([...patients, newPatient]);
+		
+		// TODO: Send email to patient with account creation instructions
+		// TODO: Integrate with ORM to persist to database
+	};
+
+	const filteredPatients = patients.filter((patient) => {
 		const matchesSearch =
 			patient.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
 			patient.last_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -90,7 +114,7 @@ export function ClinicianDashboard() {
 					</CardHeader>
 					<CardContent>
 						<p className="text-3xl font-bold text-[#0066CC]">
-							{mockPatients.length}
+							{patients.length}
 						</p>
 					</CardContent>
 				</Card>
@@ -135,6 +159,9 @@ export function ClinicianDashboard() {
 			{/* AI Recommendations */}
 			<AIRecommendations />
 
+			{/* Procedure Manager */}
+			<ProcedureManagerWidget />
+
 			{/* Burden Score (moved from patient to clinician dashboard) */}
 			<BurdenScoreCard
 				appointments={mockPatientAppointments}
@@ -174,13 +201,24 @@ export function ClinicianDashboard() {
 										Manage appointments and view trial progress
 									</CardDescription>
 								</div>
-								<Button
-									onClick={() => setShowCreateWindow(true)}
-									className="bg-[#0066CC] hover:bg-[#0052A3] text-white"
-								>
-									<Plus className="w-4 h-4 mr-2" />
-									Create Time Window
-								</Button>
+								<div className="flex gap-3">
+									<Button
+										onClick={() => setShowAddPatient(true)}
+										variant="outline"
+										className="border-[#0066CC] text-[#0066CC] hover:bg-[#0066CC] hover:text-white"
+									>
+										<Users className="w-4 h-4 mr-2" />
+										Add Patient
+									</Button>
+									<Button
+										onClick={() => setShowCreateWindow(true)}
+										variant="outline"
+										className="border-[#0066CC] text-[#0066CC] hover:bg-[#0066CC] hover:text-white"
+									>
+										<Plus className="w-4 h-4 mr-2" />
+										Create Time Window
+									</Button>
+								</div>
 							</div>
 
 							{/* Search and Filter */}
@@ -315,6 +353,13 @@ export function ClinicianDashboard() {
 				open={showCreateWindow}
 				onOpenChange={setShowCreateWindow}
 				selectedPatient={selectedPatient}
+			/>
+
+			{/* Add Patient Dialog */}
+			<AddPatientDialog
+				open={showAddPatient}
+				onOpenChange={setShowAddPatient}
+				onAddPatient={handleAddPatient}
 			/>
 		</div>
 	);
