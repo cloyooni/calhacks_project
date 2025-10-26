@@ -20,11 +20,12 @@ import {
 import { format, getDay, parse, startOfWeek } from "date-fns";
 import { Calendar as CalendarIcon, Clock, MapPin } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
-import type { SlotInfo } from "react-big-calendar";
+import type { SlotInfo, View } from "react-big-calendar";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { enUS } from "date-fns/locale";
 import { CreateTimeWindowDialog } from "./CreateTimeWindowDialog";
+import "@/styles/calendar.css";
 
 const locales = {
 	"en-US": enUS,
@@ -160,6 +161,13 @@ export function ClinicianCalendarView() {
 	);
 	const [showCreateWindow, setShowCreateWindow] = useState(false);
 	const [selectedSlot, setSelectedSlot] = useState<SlotInfo | null>(null);
+	// Track last time selection to apply to horizontal all-day range selections
+	const [lastTimeRange, setLastTimeRange] = useState<{ start: Date; end: Date } | null>(null);
+
+	// Control date and view so toolbar navigation and view buttons work consistently
+	const [currentDate, setCurrentDate] = useState(new Date());
+	const [currentView, setCurrentView] = useState<View>("week");
+
 
 	// Convert appointments to calendar events
 	const events = useMemo(
@@ -169,6 +177,100 @@ export function ClinicianCalendarView() {
 
 	// Handle selecting a time slot (drag to create)
 	const handleSelectSlot = useCallback((slotInfo: SlotInfo) => {
+		const start = slotInfo.start instanceof Date ? slotInfo.start : new Date(slotInfo.start);
+		const end = slotInfo.end instanceof Date ? slotInfo.end : new Date(slotInfo.end);
+
+		const isAllDayLike = start.getHours() === 0 && start.getMinutes() === 0 && end.getHours() === 0 && end.getMinutes() === 0;
+		const spansMultipleDays = Array.isArray(slotInfo.slots) && new Set(slotInfo.slots.map((d: Date | string) => (d instanceof Date ? d.toDateString() : new Date(d).toDateString()))).size > 1;
+
+		// If user selected in time grid (vertical) capture time range
+		if (!isAllDayLike) {
+			setLastTimeRange({ start, end });
+			setSelectedSlot(slotInfo);
+			setShowCreateWindow(true);
+			return;
+		}
+
+		// If user selected horizontally across all-day row and we have a last time range, merge them
+		if (isAllDayLike && spansMultipleDays && lastTimeRange) {
+			// Determine earliest and latest date from slots
+			const dates = (slotInfo.slots || []).map((d: Date | string) => (d instanceof Date ? d : new Date(d)));
+			dates.sort((a: Date, b: Date) => a.getTime() - b.getTime());
+			const firstDate = dates[0];
+			const lastDate = dates[dates.length - 1];
+
+			// Compose new start and end using stored times
+			const mergedStart = new Date(firstDate);
+			mergedStart.setHours(lastTimeRange.start.getHours(), lastTimeRange.start.getMinutes(), 0, 0);
+			const mergedEnd = new Date(lastDate);
+			mergedEnd.setHours(lastTimeRange.end.getHours(), lastTimeRange.end.getMinutes(), 0, 0);
+
+			const mergedSlot: SlotInfo = {
+				...slotInfo,
+				start: mergedStart,
+				end: mergedEnd,
+				action: "select",
+				slots: dates,
+			};
+
+			setSelectedSlot(mergedSlot);
+			setShowCreateWindow(true);
+			return;
+		}
+
+		// If user selected all-day range (month view or all-day row), and no prior time range, default to 09:00–17:00
+		if (isAllDayLike) {
+			const dates = (slotInfo.slots || [start]).map((d: Date | string) => (d instanceof Date ? d : new Date(d)));
+			dates.sort((a: Date, b: Date) => a.getTime() - b.getTime());
+			const firstDate = dates[0] || start;
+			const lastDate = dates[dates.length - 1] || end;
+
+			const defaultStart = new Date(firstDate);
+			defaultStart.setHours(9, 0, 0, 0);
+			const defaultEnd = new Date(lastDate);
+			defaultEnd.setHours(17, 0, 0, 0);
+
+			const defaultSlot: SlotInfo = {
+				...slotInfo,
+				start: defaultStart,
+				end: defaultEnd,
+				action: "select",
+				slots: dates,
+			};
+
+			setSelectedSlot(defaultSlot);
+			setShowCreateWindow(true);
+			return;
+		}
+
+		// If user selected horizontally across all-day row and we have a last time range, merge them
+		if (isAllDayLike && spansMultipleDays && lastTimeRange) {
+			// Determine earliest and latest date from slots
+			const dates = (slotInfo.slots || []).map((d: Date | string) => (d instanceof Date ? d : new Date(d)));
+			dates.sort((a: Date, b: Date) => a.getTime() - b.getTime());
+			const firstDate = dates[0];
+			const lastDate = dates[dates.length - 1];
+
+			// Compose new start and end using stored times
+			const mergedStart = new Date(firstDate);
+			mergedStart.setHours(lastTimeRange.start.getHours(), lastTimeRange.start.getMinutes(), 0, 0);
+			const mergedEnd = new Date(lastDate);
+			mergedEnd.setHours(lastTimeRange.end.getHours(), lastTimeRange.end.getMinutes(), 0, 0);
+
+			const mergedSlot: SlotInfo = {
+				...slotInfo,
+				start: mergedStart,
+				end: mergedEnd,
+				action: "select",
+				slots: dates,
+			};
+
+			setSelectedSlot(mergedSlot);
+			setShowCreateWindow(true);
+			return;
+		}
+
+		// Fallback: just open with provided slot
 		setSelectedSlot(slotInfo);
 		setShowCreateWindow(true);
 	}, []);
@@ -255,12 +357,15 @@ export function ClinicianCalendarView() {
 							events={events}
 							startAccessor="start"
 							endAccessor="end"
-							selectable
+							selectable="ignoreEvents"
 							onSelectSlot={handleSelectSlot}
 							onSelectEvent={handleSelectEvent}
 							eventPropGetter={eventStyleGetter}
 							views={["month", "week", "day"]}
-							defaultView="week"
+							view={currentView}
+							onView={(v) => setCurrentView(v)}
+							date={currentDate}
+							onNavigate={(d) => setCurrentDate(d)}
 							step={15}
 							timeslots={4}
 							className="trialflow-calendar"
@@ -369,6 +474,7 @@ export function ClinicianCalendarView() {
 				open={showCreateWindow}
 				onOpenChange={setShowCreateWindow}
 				selectedPatient={null}
+				selectedSlot={selectedSlot}
 			/>
 		</div>
 	);
