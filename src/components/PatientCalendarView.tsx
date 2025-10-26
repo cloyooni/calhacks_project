@@ -31,6 +31,7 @@ import {
 } from "@/lib/types";
 import { addDays, format, getDay, parse, startOfWeek } from "date-fns";
 import { Calendar as CalendarIcon, Clock, Download, MapPin, Share2 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCallback, useMemo, useState } from "react";
 import type { View } from "react-big-calendar";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
@@ -70,11 +71,61 @@ export function PatientCalendarView() {
 	const [showScheduleDialog, setShowScheduleDialog] = useState(false);
 	const [currentDate, setCurrentDate] = useState(new Date());
 	const [currentView, setCurrentView] = useState<View>("week");
+    const [appointments, setAppointments] = useState(mockPatientAppointments);
+    const [activeWindowId, setActiveWindowId] = useState<string | null>(null);
+
+    const SlotButton = ({ label, onSelect }: { label: string; onSelect: () => void }) => (
+        <Button
+            variant="outline"
+            className="justify-start text-[#5191c4] border-[#5191c4]/30 hover:bg-[#5191c4]/10"
+            onClick={onSelect}
+        >
+            {label}
+        </Button>
+    );
+
+    const handleBookSlot = (start: Date) => {
+        const id = Date.now().toString();
+        const nowSec = Math.floor(Date.now() / 1000).toString();
+        const duration = 60;
+        const newAppointment: AppointmentWithDetails = {
+            id,
+            data_creator: "patient1",
+            data_updater: "patient1",
+            create_time: nowSec,
+            update_time: nowSec,
+            patient_id: "patient1",
+            clinician_id: "clinician1",
+            time_window_id: mockAvailableTimeWindows[0].id,
+            procedure_ids: ["physical_exam"],
+            // Store as local ISO (no Z) so parseLocal renders correct hour in grid
+            scheduled_date: format(start, "yyyy-MM-dd'T'HH:mm:ss"),
+            duration_minutes: duration,
+            location: "Clinic",
+            status: AppointmentStatus.Scheduled,
+            notes: "",
+            google_calendar_event_id: null,
+            reminders_sent: null,
+        };
+        setAppointments((prev) => [...prev, newAppointment]);
+        setActiveWindowId(null);
+        setShowScheduleDialog(false);
+        setCurrentView("week");
+        setCurrentDate(new Date(start));
+        toast.success("Appointment scheduled");
+    };
 
 	// Convert appointments to calendar events
 	const events = useMemo(
-		() => mockPatientAppointments.map((apt) => appointmentToCalendarEvent(apt)),
-		[],
+		() => appointments.map((apt) => {
+            const ev = appointmentToCalendarEvent(apt);
+            // Show specific procedure name for bookings from the available window
+            if (apt.time_window_id === mockAvailableTimeWindows[0].id) {
+                ev.title = "Physical Exam";
+            }
+            return ev;
+        }),
+		[appointments],
 	);
 
 	// Handle selecting an existing event
@@ -88,6 +139,12 @@ export function PatientCalendarView() {
 
 		let backgroundColor = "#5191c4";
 		let borderColor = "#3b7ca8";
+
+		// If this is the newly booked slot (Physical Exam), match the Unavailable fill color
+		if (event.title === "Physical Exam") {
+			backgroundColor = "#5191c4"; // same as Unavailable blocks
+			borderColor = "#5191c4";
+		}
 
 		if (status === AppointmentStatus.Completed) {
 			backgroundColor = "#5191c4";
@@ -239,7 +296,10 @@ export function PatientCalendarView() {
 									<div key={h} className="h-12 border-t border-[#5191c4]/10" />
 								))}
 							</div>
-							<div className="relative" style={{ height: `${hours.length * 48}px` }}>
+							<div
+								className="relative"
+								style={{ height: `${hours.length * 48}px` }}
+							>
 								{/* Highlight available time window */}
 								{(() => {
 									const dayDate = days[col];
@@ -263,10 +323,10 @@ export function PatientCalendarView() {
 									
 									if (isInWindow) {
 										const startH = 10; // 10 AM
-										const endH = 13 + 37/60; // 1:37 PM
+										const endH = 14;  // 2 PM
 										const windowStartMin = startH * 60;
 										const windowEndMin = endH * 60;
-										const topPct = ((windowStartMin - START_HOUR * 60) / minutesInView) * 100 - 2; // Lifted up by 2%
+										const topPct = ((windowStartMin - START_HOUR * 60) / minutesInView) * 100;
 										const heightPct = ((windowEndMin - windowStartMin) / minutesInView) * 100;
 										
 										return (
@@ -327,7 +387,7 @@ export function PatientCalendarView() {
 									return bookedSlots.map((slot, idx) => {
 										const windowStartMin = slot.start * 60;
 										const windowEndMin = slot.end * 60;
-										const topPct = ((windowStartMin - START_HOUR * 60) / minutesInView) * 100 - 2;
+										const topPct = ((windowStartMin - START_HOUR * 60) / minutesInView) * 100;
 										const heightPct = ((windowEndMin - windowStartMin) / minutesInView) * 100;
 										
 										return (
@@ -393,11 +453,14 @@ export function PatientCalendarView() {
 									if (clampedEnd <= clampedStart) return null; // out of visible window
 									const topPct = ((clampedStart - windowStart) / minutesInView) * 100;
 									const heightPct = Math.max(((clampedEnd - clampedStart) / minutesInView) * 100, (15 / minutesInView) * 100);
-									const bg = "bg-[#5191c4]";
-									const border = "border-[#3b7ca8]";
+									const isPE = ev.title === "Physical Exam";
+									const bg = isPE ? '#6397d5' : '#5191c4';
+									const border = isPE ? '#6397d5' : '#3b7ca8';
 									return (
-										<div key={ev.id} className={`absolute left-2 right-2 ${bg} ${border} border rounded-md text-white text-xs px-2 py-1 shadow`}
-											style={{ top: `${topPct}%`, height: `${heightPct}%` }}
+										<div
+											key={ev.id}
+											className="absolute left-2 right-2 border rounded-md text-white text-xs px-2 py-1 shadow"
+											style={{ top: `${topPct}%`, height: `${heightPct}%`, backgroundColor: bg, borderColor: border }}
 										>
 											<div className="font-medium truncate">{ev.title}</div>
 											<div className="opacity-90">
@@ -654,37 +717,62 @@ export function PatientCalendarView() {
 									className="border-[#5191c4]/20 hover:border-[#5191c4]/40 transition-all cursor-pointer"
 								>
 									<CardContent className="p-4">
-									<div className="flex items-center justify-between">
-										<div className="flex-1">
-											<h3 className="font-semibold text-gray-900 mb-1">
-												{window.procedureNames.join(", ")}
-											</h3>
-											<div className="text-sm text-gray-600 mb-2">
-												<p>Oct 28-30, 2025</p>
-												<p>10:00 AM - 2:00 PM</p>
-												{(window as any).durationMinutes && (
-													<p className="text-xs text-gray-500">
-														Duration: {(window as any).durationMinutes} minutes
-													</p>
+										<div className="flex items-center justify-between">
+											<div className="flex-1">
+												<h3 className="font-semibold text-gray-900 mb-1">
+													{window.procedureNames.join(", ")}
+												</h3>
+												<div className="text-sm text-gray-600 mb-2">
+													<p>Oct 28-30, 2025</p>
+													<p>10:00 AM - 2:00 PM</p>
+													{(window as any).durationMinutes && (
+														<p className="text-xs text-gray-500">
+															Duration: {(window as any).durationMinutes} minutes
+														</p>
+													)}
+												</div>
+												<Badge className="bg-[#5191c4]/10 text-[#5191c4] hover:bg-[#5191c4]/20">
+													{window.availableSlots} slots available
+												</Badge>
+											</div>
+
+											<div className="flex items-center gap-3">
+												<Button
+													type="button"
+													className="bg-[#5191c4] hover:bg-[#6397d5] text-white"
+													onClick={() => setActiveWindowId(window.id)}
+												>
+													<CalendarIcon className="w-4 h-4 mr-2" />
+													Book Now
+												</Button>
+												{activeWindowId === window.id && (
+													<div className="w-56">
+														<Select
+															onValueChange={(val) => {
+																// val format: YYYY-MM-DD-HH
+																const [y, m, d, hh] = val.split("-").map((n) => parseInt(n, 10));
+																const local = new Date(y, (m || 1) - 1, d || 1, hh || 10, 0, 0, 0);
+																handleBookSlot(local);
+																setShowScheduleDialog(false);
+															}}
+														>
+															<SelectTrigger className="w-full border-[#5191c4]/30">
+																<SelectValue placeholder="Choose a time" />
+															</SelectTrigger>
+															<SelectContent>
+																<SelectItem value="2025-10-28-10">Tue, Oct 28 • 10:00 AM</SelectItem>
+																<SelectItem value="2025-10-28-12">Tue, Oct 28 • 12:00 PM</SelectItem>
+																<SelectItem value="2025-10-29-10">Wed, Oct 29 • 10:00 AM</SelectItem>
+																<SelectItem value="2025-10-29-12">Wed, Oct 29 • 12:00 PM</SelectItem>
+																<SelectItem value="2025-10-29-13">Wed, Oct 29 • 1:00 PM</SelectItem>
+																<SelectItem value="2025-10-30-11">Thu, Oct 30 • 11:00 AM</SelectItem>
+																<SelectItem value="2025-10-30-12">Thu, Oct 30 • 12:00 PM</SelectItem>
+															</SelectContent>
+														</Select>
+													</div>
 												)}
 											</div>
-											<Badge className="bg-[#5191c4]/10 text-[#5191c4] hover:bg-[#5191c4]/20">
-												{window.availableSlots} slots available
-											</Badge>
 										</div>
-
-										<Button
-											className="bg-[#5191c4] hover:bg-[#6397d5] text-white"
-											onClick={() => {
-												// TODO: Implement scheduling logic
-												toast.success("Appointment scheduled!");
-												setShowScheduleDialog(false);
-											}}
-										>
-											<CalendarIcon className="w-4 h-4 mr-2" />
-											Book Now
-										</Button>
-									</div>
 									</CardContent>
 								</Card>
 							))}
