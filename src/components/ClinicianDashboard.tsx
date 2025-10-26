@@ -36,7 +36,7 @@ import { useState } from "react";
 import { AIRecommendations } from "./AIRecommendations";
 import { ClinicianCalendarView } from "./ClinicianCalendarView";
 import { CreateTimeWindowDialog } from "./CreateTimeWindowDialog";
-import { PatientAppointmentList } from "./PatientAppointmentList";
+import { PatientAppointmentsList } from "./PatientAppointmentList";
 
 // Mock data for demonstration - in production, this would come from ORM
 const mockPatients: Patient[] = [
@@ -306,7 +306,7 @@ export function ClinicianDashboard() {
 											{/* Expanded Details */}
 											{selectedPatient?.id === patient.id && (
 												<div className="mt-4 pt-4 border-t border-[#0066CC]/10">
-													<PatientAppointmentList patientId={patient.id} />
+													<PatientAppointmentsList patientId={patient.id} />
 												</div>
 											)}
 										</CardContent>

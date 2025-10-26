@@ -85,7 +85,7 @@ console.log("App Configuration:", {
 });
 
 // Initialize auth integration automatically when app starts
-initializeAuthIntegration();
+// initializeAuthIntegration(); // Temporarily disabled for debugging
 
 // Create a QueryClient instance
 const queryClient = new QueryClient({
@@ -118,9 +118,14 @@ declare module "@tanstack/react-router" {
 }
 
 // Render the app
+console.log("Looking for root element...");
 const rootElement = document.getElementById("app");
+console.log("Root element found:", rootElement);
+
 if (rootElement) {
+	console.log("Creating React root...");
 	const root = ReactDOM.createRoot(rootElement);
+	console.log("Rendering app...");
 	root.render(
 		<StrictMode>
 			<QueryClientProvider client={queryClient}>
@@ -128,6 +133,9 @@ if (rootElement) {
 			</QueryClientProvider>
 		</StrictMode>,
 	);
+	console.log("App rendered successfully!");
+} else {
+	console.error("Root element not found! Looking for element with id 'app'");
 }
 
 // If you want to start measuring performance in your app, pass a function
