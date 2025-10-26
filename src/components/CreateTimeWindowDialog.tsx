@@ -31,6 +31,7 @@ interface CreateTimeWindowDialogProps {
 	onOpenChange: (open: boolean) => void;
 	selectedPatient: Patient | null;
 	selectedSlot?: SlotInfo | null;
+	onCreated?: (ranges: { start: Date; end: Date }[]) => void;
 }
 
 
@@ -54,6 +55,7 @@ export function CreateTimeWindowDialog({
 	onOpenChange,
 	selectedPatient,
 	selectedSlot,
+	onCreated,
 }: CreateTimeWindowDialogProps) {
 	const { procedures } = useCustomProcedures();
 	const [selectedProcedures, setSelectedProcedures] = useState<string[]>([]);
@@ -220,9 +222,39 @@ export function CreateTimeWindowDialog({
 
 			// Send emails to all patients
 			await sendEmailsToPatients();
-			
-			onOpenChange(false);
-		} catch (error) {
+            
+            // Compute concrete time ranges for each day based on date range and time blocks
+            const ranges: { start: Date; end: Date }[] = [];
+            if (startDate && endDate && timeBlocks.length > 0) {
+                const [sy, sm, sd] = startDate.split("-").map((n) => parseInt(n, 10));
+                const [ey, em, ed] = endDate.split("-").map((n) => parseInt(n, 10));
+                let d = new Date(sy, (sm || 1) - 1, sd || 1);
+                const endD = new Date(ey, (em || 1) - 1, ed || 1);
+                while (d.getTime() <= endD.getTime()) {
+                    const dow = format(d, "EEEE");
+                    const blocksForDay = timeBlocks.filter((b) => b.dayOfWeek === dow);
+                    for (const b of blocksForDay) {
+                        const [sh, smin] = b.startTime.split(":").map((n) => parseInt(n, 10));
+                        const [eh, emin] = b.endTime.split(":").map((n) => parseInt(n, 10));
+                        const s = new Date(d.getFullYear(), d.getMonth(), d.getDate(), sh || 0, smin || 0, 0, 0);
+                        const e = new Date(d.getFullYear(), d.getMonth(), d.getDate(), eh || 0, emin || 0, 0, 0);
+                        if (e.getTime() <= s.getTime()) {
+                            e.setMinutes(s.getMinutes() + 15);
+                        }
+                        ranges.push({ start: s, end: e });
+                    }
+                    // next day
+                    d.setDate(d.getDate() + 1);
+                    d.setHours(0, 0, 0, 0);
+                }
+            }
+            // Notify parent so calendar can render the created windows
+            if (ranges.length > 0) {
+                onCreated?.(ranges);
+            }
+
+            onOpenChange(false);
+        } catch (error) {
 			console.error("Error creating time window:", error);
 			toast.error("Failed to create time window");
 		} finally {

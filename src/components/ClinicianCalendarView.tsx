@@ -163,125 +163,44 @@ export function ClinicianCalendarView() {
 	const [selectedSlot, setSelectedSlot] = useState<SlotInfo | null>(null);
 	// Track last time selection to apply to horizontal all-day range selections
 	const [lastTimeRange, setLastTimeRange] = useState<{ start: Date; end: Date } | null>(null);
+	// Persist created time window highlights as calendar events
+	const [createdTimeWindows, setCreatedTimeWindows] = useState<CalendarEvent[]>([]);
 
 	// Control date and view so toolbar navigation and view buttons work consistently
 	const [currentDate, setCurrentDate] = useState(new Date());
 	const [currentView, setCurrentView] = useState<View>("week");
 
-	// Week-only: custom rectangular drag state and refs
+	// Week-only: custom rectangular drag state (disabled for read-only calendar)
 	const calendarWrapperRef = useRef<HTMLDivElement | null>(null);
 	const [dragging, setDragging] = useState(false);
 	const [dragStartPt, setDragStartPt] = useState<{ x: number; y: number } | null>(null);
 	const [dragCurrPt, setDragCurrPt] = useState<{ x: number; y: number } | null>(null);
+	const enableDrag = false;
 
-
-	// Convert appointments to calendar events
-	const events = useMemo(
+	// Convert appointments to calendar events and combine with created time windows
+	const appointmentEvents = useMemo(
 		() => mockAppointments.map((apt) => appointmentToCalendarEvent(apt)),
 		[],
 	);
+	const events = useMemo(
+		() => [...appointmentEvents, ...createdTimeWindows],
+		[appointmentEvents, createdTimeWindows],
+	);
 
-	// Handle selecting a time slot (drag to create)
+	// Selection disabled (read-only calendar)
 	const handleSelectSlot = useCallback((slotInfo: SlotInfo) => {
-		const start = slotInfo.start instanceof Date ? slotInfo.start : new Date(slotInfo.start);
-		const end = slotInfo.end instanceof Date ? slotInfo.end : new Date(slotInfo.end);
-
-		const isAllDayLike = start.getHours() === 0 && start.getMinutes() === 0 && end.getHours() === 0 && end.getMinutes() === 0;
-		const spansMultipleDays = Array.isArray(slotInfo.slots) && new Set(slotInfo.slots.map((d: Date | string) => (d instanceof Date ? d.toDateString() : new Date(d).toDateString()))).size > 1;
-
-		// If user selected in time grid (vertical) capture time range
-		if (!isAllDayLike) {
-			setLastTimeRange({ start, end });
-			setSelectedSlot(slotInfo);
-			setShowCreateWindow(true);
+		// Block selection if it overlaps a created time window
+		const s = slotInfo.start instanceof Date ? slotInfo.start : new Date(slotInfo.start);
+		const e = slotInfo.end instanceof Date ? slotInfo.end : new Date(slotInfo.end);
+		const overlapsExisting = events.some((ev) => {
+			return e > ev.start && s < ev.end;
+		});
+		if (overlapsExisting) {
 			return;
 		}
+	}, [events]);
 
-		// If user selected horizontally across all-day row and we have a last time range, merge them
-		if (isAllDayLike && spansMultipleDays && lastTimeRange) {
-			// Determine earliest and latest date from slots
-			const dates = (slotInfo.slots || []).map((d: Date | string) => (d instanceof Date ? d : new Date(d)));
-			dates.sort((a: Date, b: Date) => a.getTime() - b.getTime());
-			const firstDate = dates[0];
-			const lastDate = dates[dates.length - 1];
-
-			// Compose new start and end using stored times
-			const mergedStart = new Date(firstDate);
-			mergedStart.setHours(lastTimeRange.start.getHours(), lastTimeRange.start.getMinutes(), 0, 0);
-			const mergedEnd = new Date(lastDate);
-			mergedEnd.setHours(lastTimeRange.end.getHours(), lastTimeRange.end.getMinutes(), 0, 0);
-
-			const mergedSlot: SlotInfo = {
-				...slotInfo,
-				start: mergedStart,
-				end: mergedEnd,
-				action: "select",
-				slots: dates,
-			};
-
-			setSelectedSlot(mergedSlot);
-			setShowCreateWindow(true);
-			return;
-		}
-
-		// If user selected all-day range (month view or all-day row), and no prior time range, default to 09:00–17:00
-		if (isAllDayLike) {
-			const dates = (slotInfo.slots || [start]).map((d: Date | string) => (d instanceof Date ? d : new Date(d)));
-			dates.sort((a: Date, b: Date) => a.getTime() - b.getTime());
-			const firstDate = dates[0] || start;
-			const lastDate = dates[dates.length - 1] || end;
-
-			const defaultStart = new Date(firstDate);
-			defaultStart.setHours(9, 0, 0, 0);
-			const defaultEnd = new Date(lastDate);
-			defaultEnd.setHours(17, 0, 0, 0);
-
-			const defaultSlot: SlotInfo = {
-				...slotInfo,
-				start: defaultStart,
-				end: defaultEnd,
-				action: "select",
-				slots: dates,
-			};
-
-			setSelectedSlot(defaultSlot);
-			setShowCreateWindow(true);
-			return;
-		}
-
-		// If user selected horizontally across all-day row and we have a last time range, merge them
-		if (isAllDayLike && spansMultipleDays && lastTimeRange) {
-			// Determine earliest and latest date from slots
-			const dates = (slotInfo.slots || []).map((d: Date | string) => (d instanceof Date ? d : new Date(d)));
-			dates.sort((a: Date, b: Date) => a.getTime() - b.getTime());
-			const firstDate = dates[0];
-			const lastDate = dates[dates.length - 1];
-
-			// Compose new start and end using stored times
-			const mergedStart = new Date(firstDate);
-			mergedStart.setHours(lastTimeRange.start.getHours(), lastTimeRange.start.getMinutes(), 0, 0);
-			const mergedEnd = new Date(lastDate);
-			mergedEnd.setHours(lastTimeRange.end.getHours(), lastTimeRange.end.getMinutes(), 0, 0);
-
-			const mergedSlot: SlotInfo = {
-				...slotInfo,
-				start: mergedStart,
-				end: mergedEnd,
-				action: "select",
-				slots: dates,
-			};
-
-			setSelectedSlot(mergedSlot);
-			setShowCreateWindow(true);
-			return;
-		}
-
-		// Fallback: just open with provided slot
-		setSelectedSlot(slotInfo);
-		setShowCreateWindow(true);
-	}, []);
-
-	// Map a client coordinate to a Date in the Week view time grid
+	// Map function used for drag overlay (disabled)
 	const mapPointToDate = useCallback(
 		(pt: { x: number; y: number }) => {
 			const root = calendarWrapperRef.current?.querySelector(
@@ -320,9 +239,9 @@ export function ClinicianCalendarView() {
 		[currentDate],
 	);
 
-	// Attach week-only mouse listeners for rectangular drag in time grid
+	// Attach week-only mouse listeners for rectangular drag in time grid (disabled)
 	useEffect(() => {
-		if (currentView !== "week") return;
+		if (!enableDrag || currentView !== "week") return;
 		const root = calendarWrapperRef.current?.querySelector(
 			".trialflow-calendar .rbc-time-content",
 		) as HTMLElement | null;
@@ -383,7 +302,7 @@ export function ClinicianCalendarView() {
 			window.removeEventListener("mousemove", onMouseMove);
 			window.removeEventListener("mouseup", onMouseUp);
 		};
-	}, [currentView, dragging, dragStartPt, dragCurrPt, mapPointToDate]);
+	}, [enableDrag, currentView, dragging, dragStartPt, dragCurrPt, mapPointToDate]);
 
 	// Helper to access day columns for overlay rendering
 	const getDayColumns = useCallback(() => {
@@ -392,6 +311,77 @@ export function ClinicianCalendarView() {
 		) as HTMLElement | null;
 		if (!root) return [] as HTMLElement[];
 		return Array.from(root.querySelectorAll(".rbc-day-slot")) as HTMLElement[];
+	}, []);
+
+	// After dialog creates a time window, persist the selection as highlighted events (per-day when multi-day)
+	const handleTimeWindowCreated = useCallback((payload: { start: Date; end: Date; slots?: Date[] }) => {
+		const selectedStart = payload.start;
+		const selectedEnd = payload.end;
+		const baseId = `tw-${Date.now()}`;
+		const slotDays = (payload.slots || []).map((d) => new Date(d));
+		let newEvents: CalendarEvent[] = [];
+
+		if (slotDays.length > 1) {
+			const startH = selectedStart.getHours();
+			const startM = selectedStart.getMinutes();
+			const endH = selectedEnd.getHours();
+			const endM = selectedEnd.getMinutes();
+			newEvents = slotDays.map((day, idx) => {
+				const y = day.getFullYear();
+				const m = day.getMonth();
+				const d = day.getDate();
+				const start = new Date(y, m, d, startH, startM, 0, 0);
+				const end = new Date(y, m, d, endH, endM, 0, 0);
+				if (end.getTime() <= start.getTime()) end.setMinutes(start.getMinutes() + 15);
+				const id = `${baseId}-${idx}`;
+				return {
+					id,
+					title: "Time Window",
+					start,
+					end,
+					allDay: false,
+					resource: {
+						type: "time_window",
+						data: {
+							id,
+							start_date: start.toISOString(),
+							end_date: end.toISOString(),
+							status: TimeWindowStatus.Open,
+						} as any,
+						status: TimeWindowStatus.Open,
+					},
+				};
+			});
+		} else {
+			const id = baseId;
+			const sy = selectedStart.getFullYear();
+			const sm = selectedStart.getMonth();
+			const sd = selectedStart.getDate();
+			const ey = selectedEnd.getFullYear();
+			const em = selectedEnd.getMonth();
+			const ed = selectedEnd.getDate();
+			const start = new Date(sy, sm, sd, selectedStart.getHours(), selectedStart.getMinutes(), 0, 0);
+			const end = new Date(ey, em, ed, selectedEnd.getHours(), selectedEnd.getMinutes(), 0, 0);
+			if (end.getTime() <= start.getTime()) end.setMinutes(start.getMinutes() + 15);
+			newEvents = [{
+				id,
+				title: "Time Window",
+				start,
+				end,
+				resource: {
+					type: "time_window",
+					data: {
+						id,
+						start_date: start.toISOString(),
+						end_date: end.toISOString(),
+						status: TimeWindowStatus.Open,
+					} as any,
+					status: TimeWindowStatus.Open,
+				},
+			}];
+		}
+
+		setCreatedTimeWindows((prev) => [...prev, ...newEvents]);
 	}, []);
 
 	// Handle selecting an existing event
@@ -455,17 +445,16 @@ export function ClinicianCalendarView() {
 								Appointment Calendar
 							</CardTitle>
 							<CardDescription>
-								Drag to create time windows, click events to view details
+								View upcoming appointments and time windows
 							</CardDescription>
 						</div>
 						<div className="flex items-center gap-2">
-							<Badge className="bg-[#0066CC]/10 text-[#0066CC]">
-								Scheduled
-							</Badge>
-							<Badge className="bg-green-50 text-green-700">Completed</Badge>
-							<Badge className="bg-orange-50 text-orange-700">
-								Time Window
-							</Badge>
+							<button
+								className="bg-[#0066CC] text-white rounded-md px-4 py-2"
+								onClick={() => setShowCreateWindow(true)}
+							>
+								Create Time Window
+							</button>
 						</div>
 					</div>
 				</CardHeader>
@@ -476,11 +465,13 @@ export function ClinicianCalendarView() {
 							events={events}
 							startAccessor="start"
 							endAccessor="end"
-							selectable={currentView === "week" ? false : "ignoreEvents"}
-							onSelectSlot={handleSelectSlot}
-							onSelectEvent={handleSelectEvent}
+							min={new Date(1970, 0, 1, 0, 0, 0)}
+							max={new Date(1970, 0, 1, 23, 59, 59)}
+							scrollToTime={new Date(1970, 0, 1, 8, 0, 0)}
+							selectable={false}
 							eventPropGetter={eventStyleGetter}
 							views={["month", "week", "day"]}
+							showMultiDayTimes
 							view={currentView}
 							onView={(v) => setCurrentView(v)}
 							date={currentDate}
@@ -489,98 +480,6 @@ export function ClinicianCalendarView() {
 							timeslots={4}
 							className="trialflow-calendar"
 						/>
-						{currentView === "week" && dragging && dragStartPt && dragCurrPt && (
-							(() => {
-								const wrapRect = calendarWrapperRef.current?.getBoundingClientRect();
-								if (!wrapRect) return null;
-								const cols = getDayColumns();
-								if (!cols.length) return null;
-								const xMin = Math.min(dragStartPt.x, dragCurrPt.x);
-								const xMax = Math.max(dragStartPt.x, dragCurrPt.x);
-								const yMin = Math.min(dragStartPt.y, dragCurrPt.y);
-								const yMax = Math.max(dragStartPt.y, dragCurrPt.y);
-
-								// Helpers to snap to 15-min grid within a column
-								const snapYToMinutes = (colRect: DOMRect, clientY: number) => {
-									const yRel = Math.min(Math.max(clientY - colRect.top, 0), colRect.height);
-									const fraction = colRect.height > 0 ? yRel / colRect.height : 0;
-									let minutes = Math.round(((fraction * 24 * 60) / 15)) * 15;
-									return Math.min(Math.max(minutes, 0), 24 * 60);
-								};
-								const minutesToYPx = (colRect: DOMRect, minutes: number) => {
-									const fraction = minutes / (24 * 60);
-									return Math.round(fraction * colRect.height);
-								};
-
-								// Build per-column overlays aligned to the grid
-								const overlays: any[] = [];
-								// Determine label text once from the vertical span (using first intersected column)
-								let labelText: string | null = null;
-								for (let i = 0; i < cols.length; i++) {
-									const cRect = cols[i].getBoundingClientRect();
-									// If column intersects horizontally with drag range
-									if (xMax >= cRect.left && xMin <= cRect.right) {
-										// Compute snapped minutes range within this column
-										const minMin = snapYToMinutes(cRect, Math.max(yMin, cRect.top));
-										const maxMin = snapYToMinutes(cRect, Math.min(yMax, cRect.bottom));
-										const minutesTop = Math.min(minMin, maxMin);
-										const minutesBottom = Math.max(minMin, maxMin);
-										if (labelText === null) {
-											const baseDate = new Date();
-											const startLabelDate = new Date(baseDate);
-											startLabelDate.setHours(0, 0, 0, 0);
-											startLabelDate.setMinutes(minutesTop);
-											const endLabelDate = new Date(baseDate);
-											endLabelDate.setHours(0, 0, 0, 0);
-											endLabelDate.setMinutes(minutesBottom);
-											labelText = `${format(startLabelDate, "h:mm a")} – ${format(endLabelDate, "h:mm a")}`;
-										}
-										const top = (cRect.top - wrapRect.top) + minutesToYPx(cRect, minutesTop);
-										const bottom = (cRect.top - wrapRect.top) + minutesToYPx(cRect, minutesBottom);
-										const height = Math.max(bottom - top, 1);
-										const left = cRect.left - wrapRect.left;
-										const width = cRect.width;
-										overlays.push(
-											<div
-												key={`sel-${i}`}
-												style={{
-													position: "absolute",
-													left,
-													top,
-													width,
-													height,
-													backgroundColor: "rgba(0,102,204,0.2)",
-													border: "2px solid #0066CC",
-													borderRadius: 4,
-													pointerEvents: "none",
-													zIndex: 20,
-												}}
-											>
-												{labelText && (
-													<div
-														style={{
-															position: "absolute",
-															top: 6,
-															left: 8,
-															color: "#fff",
-															fontSize: 12,
-															fontWeight: 600,
-															whiteSpace: "nowrap",
-															padding: "2px 6px",
-															borderRadius: 9999,
-															background: "rgba(0, 82, 163, 0.9)",
-														}}
-													>
-														{labelText}
-													</div>
-												)}
-											</div>
-										);
-									}
-								}
-								return <>{overlays}</>;
-							})()
-						)}
 					</div>
 				</CardContent>
 			</Card>
@@ -686,6 +585,26 @@ export function ClinicianCalendarView() {
 				onOpenChange={setShowCreateWindow}
 				selectedPatient={null}
 				selectedSlot={selectedSlot}
+				onCreated={(ranges) => {
+					const baseId = `tw-${Date.now()}`;
+					const newEvents: CalendarEvent[] = ranges.map((r, idx): CalendarEvent => ({
+						id: `${baseId}-${idx}`,
+						title: "Time Window",
+						start: r.start,
+						end: r.end,
+						resource: {
+							type: "time_window",
+							data: {
+								id: `${baseId}-${idx}`,
+								start_date: r.start.toISOString(),
+								end_date: r.end.toISOString(),
+								status: TimeWindowStatus.Open,
+							} as any,
+							status: TimeWindowStatus.Open,
+						},
+					}));
+					setCreatedTimeWindows((prev) => [...prev, ...newEvents]);
+				}}
 			/>
 		</div>
 	);
