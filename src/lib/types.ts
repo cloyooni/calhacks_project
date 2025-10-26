@@ -136,9 +136,9 @@ export function getTimeWindowStatusLabel(status: TimeWindowStatus): string {
 export function getAppointmentStatusColor(status: AppointmentStatus): string {
 	switch (status) {
 		case AppointmentStatus.Scheduled:
-			return "text-blue-600 bg-blue-50";
+			return "bg-[#5191c4]/10 text-[#5191c4]";
 		case AppointmentStatus.Completed:
-			return "text-green-600 bg-green-50";
+			return "bg-[#5191c4]/10 text-[#5191c4]";
 		case AppointmentStatus.Cancelled:
 			return "text-gray-600 bg-gray-50";
 		case AppointmentStatus.NoShow:
