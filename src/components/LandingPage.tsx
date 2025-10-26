@@ -2,18 +2,43 @@ import { Button } from "@/components/ui/button";
 import { Calendar, Sparkles, Users, Stethoscope, BarChart3, CheckCircle } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 
+function LogoTF({ size = 48, className = "" }: { size?: number; className?: string }) {
+  const deepBlue = "#1e40af";
+  return (
+    <div
+      className={`rounded-lg flex items-center justify-center select-none ${className}`}
+      style={{ width: size, height: size, background: "transparent" }}
+      aria-label="TrialFlow logo"
+    >
+      <span
+        style={{
+          fontFamily:
+            "-apple-system, 'SF Pro Display', 'SF Pro Text', BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+          fontWeight: 700,
+          fontStyle: "italic",
+          fontSize: Math.round(size * 0.56),
+          lineHeight: 1,
+          color: deepBlue,
+          letterSpacing: -1.5,
+        }}
+      >
+        <span style={{ position: "relative", left: -2 }}>t</span>
+        <span style={{ position: "relative", marginLeft: -6 }}>f</span>
+      </span>
+    </div>
+  );
+}
+
 export function LandingPage() {
 	const navigate = useNavigate();
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-[#E6F2FF] to-white flex flex-col">
-			<header className="bg-white/80 backdrop-blur border-b border-[#0066CC]/10">
-				<div className="container mx-auto px-4 py-4 flex items-center justify-between">
-					<div className="flex items-center gap-3">
-						<div className="w-10 h-10 bg-gradient-to-br from-[#0066CC] to-[#0052A3] rounded-lg flex items-center justify-center">
-							<Calendar className="w-6 h-6 text-white" />
-						</div>
-						<div>
+		<div className="min-h-screen bg-gradient-to-br from-[#E6F2FF] to-white flex flex-col overflow-hidden">
+			<header className="bg-white/80 backdrop-blur border-b border-[#5191c4]/10">
+				<div className="container mx-auto px-4 flex items-center justify-between">
+					<div className="flex items-center gap-0">
+						<LogoTF size={80} />
+						<div className="-ml-2">
 							<h1 className="text-2xl font-bold text-gray-900 tracking-tight">TrialFlowAI</h1>
 							<p className="text-sm text-gray-600">Clinical Trial Scheduling Platform</p>
 						</div>
@@ -22,13 +47,13 @@ export function LandingPage() {
 						<Button
 							variant="ghost"
 							onClick={() => navigate({ to: "/signin" })}
-							className="text-[#0066CC] hover:bg-[#E6F2FF] rounded-md"
+							className="text-[#5191c4] hover:bg-[#E6F2FF] rounded-md"
 						>
 							Sign in
 						</Button>
 						<Button
 							onClick={() => navigate({ to: "/signin" })}
-							className="bg-[#0066CC] hover:bg-[#0052A3] text-white rounded-md shadow-sm"
+							className="bg-[#5191c4] hover:bg-[#6397d5] text-white rounded-md shadow-sm"
 						>
 							Get started
 						</Button>
@@ -38,18 +63,53 @@ export function LandingPage() {
 
 			<main className="flex-1">
 				{/* Hero */}
-				<section className="container mx-auto px-4 py-20 md:py-28">
-					<div className="grid md:grid-cols-2 gap-12 items-start">
+				<section className="relative py-20 md:py-28 overflow-hidden">
+					{/* Decorative rings in background */}
+					<div
+						aria-hidden
+						className="pointer-events-none absolute z-0 -left-[310px] -top-[100px] w-[720px] h-[720px] opacity-40"
+						style={{
+							background:
+								"conic-gradient(from 220deg at 50% 50%, #beb9fe, #c59bff, #8fb2ea, #6397d5, #b88cff, #5191c4, #2c6aa0, #6aa8e6, #beb9fe)",
+							WebkitMask: "radial-gradient(closest-side, transparent 55%, black 55%, black 71.7%, transparent 71.7%)",
+							mask: "radial-gradient(closest-side, transparent 55%, black 55%, black 71.7%, transparent 71.7%)",
+							borderRadius: "9999px",
+							filter: "none",
+						}}
+					/>
+					<div
+						aria-hidden
+						className="pointer-events-none absolute z-0 -right-[450px] top-[150px] w-[920px] h-[920px] opacity-30"
+						style={{
+							background:
+								"conic-gradient(from 270deg at 50% 50%, #beb9fe, #c59bff, #b88cff, #8fb2ea, #6397d5, #5191c4, #2c6aa0, #6aa8e6, #beb9fe)",
+							WebkitMask: "radial-gradient(closest-side, transparent 56%, black 56%, black 70.6%, transparent 70.6%)",
+							mask: "radial-gradient(closest-side, transparent 56%, black 56%, black 70.6%, transparent 70.6%)",
+							borderRadius: "9999px",
+							filter: "none",
+						}}
+					/>
+					<div
+						aria-hidden
+						className="pointer-events-none absolute z-0 left-[50%] -bottom-[200px] w-[600px] h-[600px] opacity-25"
+						style={{
+							background:
+								"conic-gradient(from 140deg at 50% 50%, #beb9fe, #c59bff, #8fb2ea, #6397d5, #b88cff, #5191c4, #2c6aa0, #6aa8e6, #beb9fe)",
+							WebkitMask: "radial-gradient(closest-side, transparent 58%, black 58%, black 72%, transparent 72%)",
+							mask: "radial-gradient(closest-side, transparent 58%, black 58%, black 72%, transparent 72%)",
+							borderRadius: "9999px",
+							filter: "none",
+						}}
+					/>
+					
+					<div className="container mx-auto px-4">
+						<div className="grid md:grid-cols-2 gap-12 items-start relative z-10">
 						<div className="relative group">
-							<div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition duration-500" />
-							<div className="relative bg-white rounded-2xl border border-[#0066CC]/20 ring-1 ring-blue-50 p-10 shadow-md hover:shadow-2xl transition-all duration-300">
-								<div className="inline-flex items-center gap-2 text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-full mb-6">
-									<Sparkles className="w-3 h-3" />
-									<span>Hackathon prototype • In active development</span>
-								</div>
+							<div className="absolute -inset-1 bg-gradient-to-r from-[#5191c4] to-[#8fb2ea] rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition duration-500" />
+							<div className="relative bg-white/85 rounded-2xl border border-[#0066CC]/20 ring-1 ring-blue-50 p-10 shadow-md hover:shadow-2xl transition-all duration-300">
 								<h2 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight tracking-tight">
 									Transform static protocols into
-									<span className="block mt-2 bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">interactive, intelligent schedules</span>
+									<span className="block mt-2 bg-gradient-to-r from-[#5191c4] to-[#8fb2ea] bg-clip-text text-transparent">interactive, intelligent schedules</span>
 								</h2>
 								<p className="mt-6 mb-8 text-gray-600 text-lg leading-relaxed">
 									Early prototype exploring linked calendars, basic scheduling assistance, and notification workflows for clinical trials.
@@ -57,7 +117,7 @@ export function LandingPage() {
 								<div className="flex flex-wrap gap-4">
 									<Button 
 										onClick={() => navigate({ to: "/signin" })} 
-										className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg px-6 py-3 text-base font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+										className="bg-gradient-to-r from-[#5191c4] to-[#6397d5] hover:from-[#6397d5] hover:to-[#8fb2ea] text-white rounded-lg px-6 py-3 text-base font-medium shadow-lg hover:shadow-xl transition-all duration-200"
 									>
 										Get started
 									</Button>
@@ -68,25 +128,16 @@ export function LandingPage() {
 										Learn more
 									</button>
 								</div>
-								<div className="mt-8 pt-8 border-t border-gray-100 text-sm text-gray-500">
-									<span>Open-source friendly prototype for hackathons and demos</span>
-								</div>
 							</div>
 						</div>
 
 						<div className="relative group">
-							<div className="absolute -inset-1 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition duration-500" />
-							<div className="relative bg-white rounded-2xl border border-[#0066CC]/20 ring-1 ring-blue-50 p-10 shadow-md hover:shadow-2xl transition-all duration-300">
-								<div className="flex items-center gap-2 mb-6">
-									<div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
-										<Sparkles className="w-4 h-4 text-white" />
-									</div>
-									<span className="font-semibold text-gray-900">AI-powered insights</span>
-								</div>
+							<div className="absolute -inset-1 bg-gradient-to-r from-[#6397d5] to-[#8fb2ea] rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition duration-500" />
+							<div className="relative bg-white/85 rounded-2xl border border-[#0066CC]/20 ring-1 ring-blue-50 p-10 shadow-md hover:shadow-2xl transition-all duration-300">
 								<ul className="space-y-4">
 									<li className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
 										<div className="mt-0.5">
-											<CheckCircle className="w-5 h-5 text-emerald-500" />
+											<CheckCircle className="w-5 h-5 text-[#6397d5]" />
 										</div>
 										<div>
 											<div className="font-medium text-gray-900 text-sm">Bundle procedures to reduce visits</div>
@@ -95,7 +146,7 @@ export function LandingPage() {
 									</li>
 									<li className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
 										<div className="mt-0.5">
-											<CheckCircle className="w-5 h-5 text-emerald-500" />
+											<CheckCircle className="w-5 h-5 text-[#6397d5]" />
 										</div>
 										<div>
 											<div className="font-medium text-gray-900 text-sm">Linked patient–clinician calendars</div>
@@ -104,7 +155,7 @@ export function LandingPage() {
 									</li>
 									<li className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
 										<div className="mt-0.5">
-											<CheckCircle className="w-5 h-5 text-emerald-500" />
+											<CheckCircle className="w-5 h-5 text-[#6397d5]" />
 										</div>
 										<div>
 											<div className="font-medium text-gray-900 text-sm">Automatic reminders</div>
@@ -113,7 +164,7 @@ export function LandingPage() {
 									</li>
 									<li className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
 										<div className="mt-0.5">
-											<CheckCircle className="w-5 h-5 text-emerald-500" />
+											<CheckCircle className="w-5 h-5 text-[#6397d5]" />
 										</div>
 										<div>
 											<div className="font-medium text-gray-900 text-sm">Google Calendar integration</div>
@@ -124,10 +175,11 @@ export function LandingPage() {
 							</div>
 						</div>
 					</div>
-				</section>
+				</div>
+			</section>
 
 				{/* Value Props */}
-				<section className="bg-white border-t border-[#0066CC]/10">
+				<section className="bg-white border-t border-[#0066CC]/10 overflow-hidden">
 					<div className="container mx-auto px-4 py-20">
 						<div className="text-center mb-12">
 							<h3 className="text-3xl font-bold text-gray-900 mb-3">Designed for every stakeholder</h3>
@@ -135,12 +187,12 @@ export function LandingPage() {
 						</div>
 						<div className="grid md:grid-cols-3 gap-8">
 							<div className="group relative">
-								<div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl opacity-0 group-hover:opacity-100 blur transition duration-300" />
-								<div className="relative p-8 bg-white rounded-2xl border border-[#0066CC]/20 ring-1 ring-blue-50 shadow-md hover:shadow-2xl transition-all duration-300 h-full border-l-4 border-l-[#0066CC]">
-									<div className="absolute top-0 left-8 right-8 h-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-b-full"></div>
+								<div className="absolute -inset-0.5 bg-gradient-to-r from-[#5191c4] to-[#8fb2ea] rounded-2xl opacity-0 group-hover:opacity-100 blur transition duration-300" />
+								<div className="relative p-8 bg-white/85 rounded-2xl border border-[#0066CC]/20 ring-1 ring-blue-50 shadow-md hover:shadow-2xl transition-all duration-300 h-full border-l-4 border-l-[#5191c4]">
+									<div className="absolute top-0 left-8 right-8 h-1 bg-gradient-to-r from-[#5191c4] to-[#6397d5] rounded-b-full"></div>
 									<div className="flex items-center gap-3 mb-4 mt-2">
-										<div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
-											<Stethoscope className="w-6 h-6 text-blue-600" />
+										<div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#beb9fe]/20 to-[#beb9fe]/40 flex items-center justify-center">
+											<Stethoscope className="w-6 h-6 text-[#5191c4]" />
 										</div>
 										<div>
 											<h3 className="font-semibold text-gray-900 text-lg">For Clinical Teams</h3>
@@ -152,15 +204,15 @@ export function LandingPage() {
 									</p>
 									<div className="space-y-2">
 										<div className="flex items-center gap-2 text-xs text-gray-600">
-											<div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
+											<div className="w-1.5 h-1.5 bg-[#8fb2ea] rounded-full"></div>
 											<span>Protocol timeline visualization</span>
 										</div>
 										<div className="flex items-center gap-2 text-xs text-gray-600">
-											<div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
+											<div className="w-1.5 h-1.5 bg-[#8fb2ea] rounded-full"></div>
 											<span>Create and manage time windows</span>
 										</div>
 										<div className="flex items-center gap-2 text-xs text-gray-600">
-											<div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
+											<div className="w-1.5 h-1.5 bg-[#8fb2ea] rounded-full"></div>
 											<span>Real-time patient tracking</span>
 										</div>
 									</div>
@@ -168,12 +220,12 @@ export function LandingPage() {
 							</div>
 							
 							<div className="group relative">
-								<div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl opacity-0 group-hover:opacity-100 blur transition duration-300" />
-								<div className="relative p-8 bg-white rounded-2xl border border-[#0066CC]/20 ring-1 ring-blue-50 shadow-md hover:shadow-2xl transition-all duration-300 h-full border-l-4 border-l-[#0066CC]">
-									<div className="absolute top-0 left-8 right-8 h-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-b-full"></div>
+								<div className="absolute -inset-0.5 bg-gradient-to-r from-[#5191c4] to-[#8fb2ea] rounded-2xl opacity-0 group-hover:opacity-100 blur transition duration-300" />
+								<div className="relative p-8 bg-white/85 rounded-2xl border border-[#0066CC]/20 ring-1 ring-blue-50 shadow-md hover:shadow-2xl transition-all duration-300 h-full border-l-4 border-l-[#5191c4]">
+									<div className="absolute top-0 left-8 right-8 h-1 bg-gradient-to-r from-[#5191c4] to-[#6397d5] rounded-b-full"></div>
 									<div className="flex items-center gap-3 mb-4 mt-2">
-										<div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
-											<Users className="w-6 h-6 text-blue-600" />
+										<div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#beb9fe]/20 to-[#beb9fe]/40 flex items-center justify-center">
+											<Users className="w-6 h-6 text-[#5191c4]" />
 										</div>
 										<div>
 											<h3 className="font-semibold text-gray-900 text-lg">For Patients</h3>
@@ -185,15 +237,15 @@ export function LandingPage() {
 									</p>
 									<div className="space-y-2">
 										<div className="flex items-center gap-2 text-xs text-gray-600">
-											<div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
+											<div className="w-1.5 h-1.5 bg-[#8fb2ea] rounded-full"></div>
 											<span>Flexible self-scheduling</span>
 										</div>
 										<div className="flex items-center gap-2 text-xs text-gray-600">
-											<div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
+											<div className="w-1.5 h-1.5 bg-[#8fb2ea] rounded-full"></div>
 											<span>Progress tracking</span>
 										</div>
 										<div className="flex items-center gap-2 text-xs text-gray-600">
-											<div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
+											<div className="w-1.5 h-1.5 bg-[#8fb2ea] rounded-full"></div>
 											<span>Visit preparation guides</span>
 										</div>
 									</div>
@@ -201,12 +253,12 @@ export function LandingPage() {
 							</div>
 							
 							<div className="group relative">
-								<div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl opacity-0 group-hover:opacity-100 blur transition duration-300" />
-								<div className="relative p-8 bg-white rounded-2xl border border-[#0066CC]/20 ring-1 ring-blue-50 shadow-md hover:shadow-2xl transition-all duration-300 h-full border-l-4 border-l-[#0066CC]">
-									<div className="absolute top-0 left-8 right-8 h-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-b-full"></div>
+								<div className="absolute -inset-0.5 bg-gradient-to-r from-[#5191c4] to-[#8fb2ea] rounded-2xl opacity-0 group-hover:opacity-100 blur transition duration-300" />
+								<div className="relative p-8 bg-white/85 rounded-2xl border border-[#0066CC]/20 ring-1 ring-blue-50 shadow-md hover:shadow-2xl transition-all duration-300 h-full border-l-4 border-l-[#5191c4]">
+									<div className="absolute top-0 left-8 right-8 h-1 bg-gradient-to-r from-[#5191c4] to-[#6397d5] rounded-b-full"></div>
 									<div className="flex items-center gap-3 mb-4 mt-2">
-										<div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
-											<BarChart3 className="w-6 h-6 text-blue-600" />
+										<div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#beb9fe]/20 to-[#beb9fe]/40 flex items-center justify-center">
+											<BarChart3 className="w-6 h-6 text-[#5191c4]" />
 										</div>
 										<div>
 											<h3 className="font-semibold text-gray-900 text-lg">For Sponsors</h3>
@@ -218,15 +270,15 @@ export function LandingPage() {
 									</p>
 									<div className="space-y-2">
 										<div className="flex items-center gap-2 text-xs text-gray-600">
-											<div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
+											<div className="w-1.5 h-1.5 bg-[#8fb2ea] rounded-full"></div>
 											<span>Real-time analytics</span>
 										</div>
 										<div className="flex items-center gap-2 text-xs text-gray-600">
-											<div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
+											<div className="w-1.5 h-1.5 bg-[#8fb2ea] rounded-full"></div>
 											<span>Feasibility snapshots</span>
 										</div>
 										<div className="flex items-center gap-2 text-xs text-gray-600">
-											<div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
+											<div className="w-1.5 h-1.5 bg-[#8fb2ea] rounded-full"></div>
 											<span>Risk mitigation alerts</span>
 										</div>
 									</div>
@@ -241,7 +293,7 @@ export function LandingPage() {
 				<div className="container mx-auto px-4 py-8">
 					<div className="flex flex-col md:flex-row items-center justify-between gap-4">
 						<div className="flex items-center gap-2">
-							<Calendar className="w-4 h-4 text-blue-600" />
+							<Calendar className="w-4 h-4 text-[#5191c4]" />
 							<span className="text-sm text-gray-600"> {new Date().getFullYear()} TrialFlowAI</span>
 						</div>
 						<div className="flex items-center gap-6 text-sm">

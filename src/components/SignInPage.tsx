@@ -131,7 +131,7 @@ export function SignInPage() {
       {/* Thick off-screen conic-gradient rings */}
       <div
         aria-hidden
-        className="pointer-events-none absolute z-0 -left-[310px] -bottom-[310px] w-[720px] h-[720px] opacity-70"
+        className="pointer-events-none absolute z-0 -left-[310px] -bottom-[310px] w-[720px] h-[720px] opacity-40"
         style={{
           background:
             "conic-gradient(from 220deg at 50% 50%, #beb9fe, #c59bff, #8fb2ea, #6397d5, #b88cff, #5191c4, #2c6aa0, #6aa8e6, #beb9fe)",
@@ -143,7 +143,7 @@ export function SignInPage() {
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute z-0 -right-[342px] -top-[342px] w-[820px] h-[820px] opacity-70"
+        className="pointer-events-none absolute z-0 -right-[342px] -top-[342px] w-[820px] h-[820px] opacity-30"
         style={{
           background:
             "conic-gradient(from 40deg at 50% 50%, #beb9fe, #c59bff, #8fb2ea, #6397d5, #b88cff, #5191c4, #2c6aa0, #6aa8e6, #beb9fe)",
@@ -157,9 +157,9 @@ export function SignInPage() {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-1 mb-4 -translate-x-[15px]">
+          <div className="flex items-center justify-center gap-0 mb-4 -translate-x-[10px]">
             <LogoTF size={96} />
-            <div>
+            <div className="-ml-3">
               <h1 className="text-3xl font-semibold text-gray-900">TrialFlow</h1>
               <p className="text-sm text-gray-600">Clinical Trial Scheduling</p>
             </div>
@@ -167,7 +167,7 @@ export function SignInPage() {
         </div>
 
         {/* Sign In Card */}
-        <Card className="bg-white/98 shadow-lg relative z-10">
+        <Card className="bg-white/85 shadow-lg relative z-10">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">
               {isSignUp ? 'Create Account' : 'Welcome Back'}
