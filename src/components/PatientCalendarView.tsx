@@ -393,8 +393,10 @@ export function PatientCalendarView() {
 									if (clampedEnd <= clampedStart) return null; // out of visible window
 									const topPct = ((clampedStart - windowStart) / minutesInView) * 100;
 									const heightPct = Math.max(((clampedEnd - clampedStart) / minutesInView) * 100, (15 / minutesInView) * 100);
+									const bg = "bg-[#5191c4]";
+									const border = "border-[#3b7ca8]";
 									return (
-										<div key={ev.id} className="absolute left-2 right-2 bg-[#5191c4] border-[#3b7ca8] border rounded-md text-white text-xs px-2 py-1 shadow"
+										<div key={ev.id} className={`absolute left-2 right-2 ${bg} ${border} border rounded-md text-white text-xs px-2 py-1 shadow`}
 											style={{ top: `${topPct}%`, height: `${heightPct}%` }}
 										>
 											<div className="font-medium truncate">{ev.title}</div>

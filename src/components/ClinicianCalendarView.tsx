@@ -51,8 +51,8 @@ const mockAppointments: AppointmentWithDetails[] = [
 		clinician_id: "clinician1",
 		time_window_id: "1",
 		procedure_ids: ["1", "2"],
-		scheduled_date: "2025-01-28T10:00:00Z",
-		duration_minutes: 45,
+		scheduled_date: "2025-10-27T09:00:00Z",
+		duration_minutes: 30,
 		location: "Building A, Room 201",
 		status: AppointmentStatus.Scheduled,
 		notes: "",
@@ -64,13 +64,13 @@ const mockAppointments: AppointmentWithDetails[] = [
 			data_updater: "clinician1",
 			create_time: "1704067200",
 			update_time: "1704067200",
-			first_name: "John",
-			last_name: "Smith",
-			email: "john.smith@example.com",
+			first_name: "Ryan",
+			last_name: "Vu",
+			email: "ryanvu657564@gmail.com",
 			phone: "555-0101",
 			trial_phase: 2,
 			enrollment_date: "2024-01-01T00:00:00Z",
-			completion_percentage: 45,
+			completion_percentage: 48,
 		},
 		procedures: [
 			{
@@ -107,10 +107,9 @@ const mockAppointments: AppointmentWithDetails[] = [
 		clinician_id: "clinician1",
 		time_window_id: "2",
 		procedure_ids: ["3", "4"],
-		scheduled_date: "2025-02-05T14:30:00Z",
-		duration_minutes: 60,
-		location: "Building B, Room 105",
-		status: AppointmentStatus.Scheduled,
+		scheduled_date: "2025-10-23T12:00:00Z",
+		duration_minutes: 45,
+		status: AppointmentStatus.Completed,
 		notes: "",
 		google_calendar_event_id: null,
 		reminders_sent: null,
@@ -126,7 +125,7 @@ const mockAppointments: AppointmentWithDetails[] = [
 			phone: "555-0102",
 			trial_phase: 3,
 			enrollment_date: "2024-01-15T00:00:00Z",
-			completion_percentage: 78,
+			completion_percentage: 48,
 		},
 		procedures: [
 			{
@@ -450,8 +449,8 @@ export function ClinicianCalendarView() {
                                     const topPct = ((clampedStart - windowStart) / minutesInView) * 100;
                                     const heightPct = Math.max(((clampedEnd - clampedStart) / minutesInView) * 100, (15 / minutesInView) * 100);
                                     const isTimeWindow = ev.resource?.type === "time_window";
-                                    const bg = isTimeWindow ? "bg-green-500" : "bg-blue-600";
-                                    const border = isTimeWindow ? "border-green-600" : "border-blue-700";
+                                    const bg = isTimeWindow ? "bg-green-500" : "bg-[#5191c4]";
+                                    const border = isTimeWindow ? "border-green-600" : "border-[#3b7ca8]";
                                     return (
                                         <div key={ev.id} className={`absolute left-2 right-2 ${bg} ${border} border rounded-md text-white text-xs px-2 py-1 shadow`}
                                             style={{ top: `${topPct}%`, height: `${heightPct}%` }}

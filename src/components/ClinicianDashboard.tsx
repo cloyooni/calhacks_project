@@ -52,7 +52,7 @@ const mockPatients: Patient[] = [
 		phone: "555-0101",
 		trial_phase: PatientTrialPhase.Phase3,
 		enrollment_date: "2024-01-15T00:00:00Z",
-		completion_percentage: 78,
+		completion_percentage: 48,
 	},
 ];
 
