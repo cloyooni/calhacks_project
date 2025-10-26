@@ -1,0 +1,308 @@
+{
+  "id": "102019a1d95088675cd91df108cf09fc9a4",
+  "version": "102019a1d95088674a084c030fb4456cc8c",
+  "schema": {
+    "name": "appointment",
+    "description": "Represents a scheduled appointment for a patient within a time window.",
+    "fields": [
+      {
+        "name": "id",
+        "description": "Unique identifier for each appointment.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal system identifier."
+        }
+      },
+      {
+        "name": "data_creator",
+        "description": "id of the user who creates the record",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        }
+      },
+      {
+        "name": "data_updater",
+        "description": "id of the user who updates the record",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        }
+      },
+      {
+        "name": "create_time",
+        "description": "create time in timestamp unix",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        },
+        "format": "timestamp"
+      },
+      {
+        "name": "update_time",
+        "description": "update time in timestamp unix",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        },
+        "format": "timestamp"
+      },
+      {
+        "name": "time_window_id",
+        "description": "The ID of the time window this appointment is booked in.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Links appointment to its availability window."
+        }
+      },
+      {
+        "name": "patient_id",
+        "description": "The ID of the patient for this appointment.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 3,
+          "reason": "Links appointment to a specific patient."
+        }
+      },
+      {
+        "name": "clinician_id",
+        "description": "Identifier for the clinician conducting the appointment. Denormalized from time_window for query efficiency.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal scheduling information."
+        }
+      },
+      {
+        "name": "procedure_ids",
+        "description": "An array of procedure IDs scheduled for this appointment.",
+        "type": 101,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal scheduling information."
+        },
+        "items": {
+          "description": "A single procedure ID.",
+          "type": 1,
+          "taxonomy": {
+            "category": "Identifier",
+            "subject": "Procedure"
+          }
+        }
+      },
+      {
+        "name": "scheduled_date",
+        "description": "The specific date and time of the appointment, as a 10-digit unix timestamp string.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 3,
+          "reason": "Sensitive health appointment information."
+        },
+        "format": "timestamp"
+      },
+      {
+        "name": "duration_minutes",
+        "description": "The total duration of the appointment in minutes.",
+        "type": 2,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal scheduling information."
+        },
+        "numeric": "int"
+      },
+      {
+        "name": "location",
+        "description": "The location/room where the appointment will take place.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal operational information."
+        },
+        "nullable": true
+      },
+      {
+        "name": "notes",
+        "description": "Any notes related to the appointment.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 3,
+          "reason": "May contain sensitive patient or clinical notes."
+        },
+        "nullable": true
+      },
+      {
+        "name": "status",
+        "description": "The current status of the appointment.",
+        "type": 100,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal scheduling status."
+        },
+        "enumeration": [
+          {
+            "value": "Unspecified"
+          },
+          {
+            "number": 1,
+            "value": "Scheduled"
+          },
+          {
+            "number": 2,
+            "value": "Completed"
+          },
+          {
+            "number": 3,
+            "value": "Cancelled"
+          },
+          {
+            "number": 4,
+            "value": "NoShow"
+          }
+        ]
+      },
+      {
+        "name": "google_calendar_event_id",
+        "description": "The event ID from an external calendar integration like Google Calendar.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Identifier for an external system."
+        },
+        "nullable": true
+      },
+      {
+        "name": "reminders_sent",
+        "description": "A JSON string tracking the reminders that have been sent for this appointment.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal operational log."
+        },
+        "nullable": true
+      }
+    ],
+    "indexes": [
+      {
+        "fields": [
+          "id"
+        ],
+        "unique": true,
+        "primary": true,
+        "order": false
+      },
+      {
+        "fields": [
+          "data_creator"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "data_updater"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "time_window_id"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "patient_id"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "clinician_id"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "status"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "scheduled_date"
+        ],
+        "order": true
+      },
+      {
+        "fields": [
+          "google_calendar_event_id"
+        ],
+        "unique": true,
+        "order": false
+      },
+      {
+        "fields": [
+          "patient_id",
+          "status"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "clinician_id",
+          "status"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "clinician_id",
+          "scheduled_date"
+        ],
+        "order": true
+      }
+    ],
+    "relations": [
+      {
+        "referencing_fields": [
+          "time_window_id"
+        ],
+        "referenced_entity": {
+          "name": "time_window"
+        },
+        "referenced_fields": [
+          "id"
+        ]
+      },
+      {
+        "referencing_fields": [
+          "patient_id"
+        ],
+        "referenced_entity": {
+          "name": "patient"
+        },
+        "referenced_fields": [
+          "id"
+        ]
+      }
+    ]
+  },
+  "task": {
+    "id": "68fd5421128d32154869dba1",
+    "root": "68fd5421128d32154869dba1",
+    "project": "68fd5421128d32154869dba0",
+    "user": "c891f3f0-9041-701e-e0ce-9273ecb31f67"
+  },
+  "namespace": {
+    "id": "01987547fc6c72ecb453bd2736bd4ea0",
+    "tenant": 2,
+    "name": "global-1",
+    "default": true
+  },
+  "revision": 1
+}

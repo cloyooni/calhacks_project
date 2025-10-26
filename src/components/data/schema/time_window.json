@@ -1,0 +1,239 @@
+{
+  "id": "102019a1d9508867578a9e86df0d29c0150",
+  "version": "102019a1d95088674a084c030fb4456cc8c",
+  "schema": {
+    "name": "time_window",
+    "description": "Represents blocks of time available for scheduling appointments.",
+    "fields": [
+      {
+        "name": "id",
+        "description": "Unique identifier for each time window.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal system identifier."
+        }
+      },
+      {
+        "name": "data_creator",
+        "description": "id of the user who creates the record",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        }
+      },
+      {
+        "name": "data_updater",
+        "description": "id of the user who updates the record",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        }
+      },
+      {
+        "name": "create_time",
+        "description": "create time in timestamp unix",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        },
+        "format": "timestamp"
+      },
+      {
+        "name": "update_time",
+        "description": "update time in timestamp unix",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        },
+        "format": "timestamp"
+      },
+      {
+        "name": "clinician_id",
+        "description": "Identifier for the clinician this time window belongs to.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal scheduling information."
+        }
+      },
+      {
+        "name": "patient_id",
+        "description": "Identifier for the patient this time window is for.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 3,
+          "reason": "Links a schedule to a specific patient."
+        }
+      },
+      {
+        "name": "procedure_ids",
+        "description": "An array of procedure IDs that can be scheduled in this window.",
+        "type": 101,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal scheduling information."
+        },
+        "items": {
+          "description": "A single procedure ID.",
+          "type": 1,
+          "taxonomy": {
+            "category": "Identifier",
+            "subject": "Procedure"
+          }
+        }
+      },
+      {
+        "name": "start_date",
+        "description": "The start date and time of the window, as a 10-digit unix timestamp string.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal scheduling information."
+        },
+        "format": "timestamp"
+      },
+      {
+        "name": "end_date",
+        "description": "The end date and time of the window, as a 10-digit unix timestamp string.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal scheduling information."
+        },
+        "format": "timestamp"
+      },
+      {
+        "name": "available_time_blocks",
+        "description": "A JSON string representing the specific available time slots within the window.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal scheduling information."
+        },
+        "nullable": true
+      },
+      {
+        "name": "status",
+        "description": "The current status of the time window.",
+        "type": 100,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal scheduling status."
+        },
+        "enumeration": [
+          {
+            "value": "Unspecified"
+          },
+          {
+            "number": 1,
+            "value": "Open"
+          },
+          {
+            "number": 2,
+            "value": "PartiallyBooked"
+          },
+          {
+            "number": 3,
+            "value": "FullyBooked"
+          },
+          {
+            "number": 4,
+            "value": "Closed"
+          }
+        ]
+      }
+    ],
+    "indexes": [
+      {
+        "fields": [
+          "id"
+        ],
+        "unique": true,
+        "primary": true,
+        "order": false
+      },
+      {
+        "fields": [
+          "data_creator"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "data_updater"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "clinician_id"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "patient_id"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "status"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "clinician_id",
+          "status"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "patient_id",
+          "status"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "clinician_id",
+          "start_date"
+        ],
+        "order": true
+      }
+    ],
+    "relations": [
+      {
+        "referencing_fields": [
+          "patient_id"
+        ],
+        "referenced_entity": {
+          "name": "patient"
+        },
+        "referenced_fields": [
+          "id"
+        ]
+      }
+    ]
+  },
+  "task": {
+    "id": "68fd5421128d32154869dba1",
+    "root": "68fd5421128d32154869dba1",
+    "project": "68fd5421128d32154869dba0",
+    "user": "c891f3f0-9041-701e-e0ce-9273ecb31f67"
+  },
+  "namespace": {
+    "id": "01987547fc6c72ecb453bd2736bd4ea0",
+    "tenant": 2,
+    "name": "global-1",
+    "default": true
+  },
+  "revision": 1
+}

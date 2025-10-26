@@ -1,0 +1,254 @@
+/* TrialFlow Calendar Custom Styles */
+/* Blue and White Theme for react-big-calendar */
+
+.trialflow-calendar {
+	font-family: inherit;
+}
+
+/* Calendar header styling */
+.trialflow-calendar .rbc-header {
+	background: linear-gradient(to bottom, #0066cc, #0052a3);
+	color: white;
+	font-weight: 600;
+	padding: 12px 8px;
+	border: none;
+	border-bottom: 2px solid #0052a3;
+}
+
+/* Today's date highlight */
+.trialflow-calendar .rbc-today {
+	background-color: #e6f2ff;
+}
+
+/* Month view cells */
+.trialflow-calendar .rbc-month-view {
+	border: 1px solid rgba(0, 102, 204, 0.2);
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.trialflow-calendar .rbc-day-bg {
+	border-color: rgba(0, 102, 204, 0.1);
+}
+
+/* Week and day view time slots */
+.trialflow-calendar .rbc-time-slot {
+	border-top-color: rgba(0, 102, 204, 0.1);
+}
+
+.trialflow-calendar .rbc-time-header-content {
+	border-left-color: rgba(0, 102, 204, 0.2);
+}
+
+.trialflow-calendar .rbc-day-slot .rbc-time-slot {
+	border-top-color: rgba(0, 102, 204, 0.05);
+}
+
+/* Current time indicator */
+.trialflow-calendar .rbc-current-time-indicator {
+	background-color: #0066cc;
+	height: 2px;
+}
+
+/* Event styling (additional to inline styles) */
+.trialflow-calendar .rbc-event {
+	transition: all 0.2s ease;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.trialflow-calendar .rbc-event:hover {
+	box-shadow: 0 4px 6px rgba(0, 102, 204, 0.3);
+	transform: translateY(-1px);
+	cursor: pointer;
+}
+
+.trialflow-calendar .rbc-event-label {
+	font-size: 0.75rem;
+	font-weight: 500;
+}
+
+.trialflow-calendar .rbc-event-content {
+	font-size: 0.875rem;
+	padding: 2px 4px;
+}
+
+/* Selected event */
+.trialflow-calendar .rbc-selected {
+	outline: 3px solid #0066cc;
+	outline-offset: 2px;
+}
+
+/* Toolbar styling */
+.trialflow-calendar .rbc-toolbar {
+	padding: 16px;
+	margin-bottom: 16px;
+	background: white;
+	border: 1px solid rgba(0, 102, 204, 0.2);
+	border-radius: 8px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+
+.trialflow-calendar .rbc-toolbar-label {
+	font-size: 1.25rem;
+	font-weight: 700;
+	color: #0066cc;
+	text-align: center;
+	flex: 1 1 200px;
+}
+
+/* Toolbar buttons */
+.trialflow-calendar .rbc-toolbar button {
+	background: white;
+	border: 1px solid rgba(0, 102, 204, 0.3);
+	color: #0066cc;
+	padding: 8px 16px;
+	border-radius: 6px;
+	font-weight: 500;
+	transition: all 0.2s ease;
+	cursor: pointer;
+}
+
+.trialflow-calendar .rbc-toolbar button:hover {
+	background: #e6f2ff;
+	border-color: #0066cc;
+}
+
+.trialflow-calendar .rbc-toolbar button:active,
+.trialflow-calendar .rbc-toolbar button.rbc-active {
+	background: linear-gradient(to bottom, #0066cc, #0052a3);
+	color: white;
+	border-color: #0052a3;
+}
+
+.trialflow-calendar .rbc-toolbar button:focus {
+	outline: 2px solid #0066cc;
+	outline-offset: 2px;
+}
+
+/* Off-range dates (dates outside current month) */
+.trialflow-calendar .rbc-off-range {
+	color: #9ca3af;
+}
+
+.trialflow-calendar .rbc-off-range-bg {
+	background: #f9fafb;
+}
+
+/* Month header row */
+.trialflow-calendar .rbc-month-header {
+	background: white;
+}
+
+/* Date cell numbers */
+.trialflow-calendar .rbc-date-cell {
+	padding: 8px;
+	text-align: right;
+}
+
+.trialflow-calendar .rbc-date-cell > a {
+	color: #374151;
+	font-weight: 500;
+}
+
+.trialflow-calendar .rbc-date-cell > a:hover {
+	color: #0066cc;
+	text-decoration: none;
+}
+
+/* Time gutter (time column on left) */
+.trialflow-calendar .rbc-time-gutter {
+	background: #f9fafb;
+	border-right: 1px solid rgba(0, 102, 204, 0.2);
+}
+
+.trialflow-calendar .rbc-time-header-gutter {
+	background: white;
+}
+
+/* Week view all-day section */
+.trialflow-calendar .rbc-allday-cell {
+	background: #f9fafb;
+}
+
+.trialflow-calendar .rbc-row-segment {
+	padding: 2px 4px;
+}
+
+/* Show more link for overflow events */
+.trialflow-calendar .rbc-show-more {
+	background: #e6f2ff;
+	color: #0066cc;
+	font-weight: 600;
+	padding: 4px 8px;
+	border-radius: 4px;
+	margin: 2px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.trialflow-calendar .rbc-show-more:hover {
+	background: #0066cc;
+	color: white;
+}
+
+/* Overlay for show more popup */
+.trialflow-calendar .rbc-overlay {
+	background: white;
+	border: 2px solid #0066cc;
+	border-radius: 8px;
+	box-shadow: 0 10px 25px rgba(0, 102, 204, 0.2);
+	padding: 12px;
+}
+
+.trialflow-calendar .rbc-overlay-header {
+	background: linear-gradient(to right, #0066cc, #0052a3);
+	color: white;
+	padding: 8px 12px;
+	margin: -12px -12px 12px -12px;
+	border-radius: 6px 6px 0 0;
+	font-weight: 600;
+}
+
+/* Drag and drop styles for clinician view */
+.trialflow-calendar .rbc-addons-dnd-resizable {
+	position: relative;
+}
+
+.trialflow-calendar .rbc-addons-dnd-resize-anchor {
+	background: rgba(255, 255, 255, 0.3);
+	border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Selection highlight when dragging */
+.trialflow-calendar .rbc-slot-selection {
+	background-color: rgba(0, 102, 204, 0.2);
+	border: 2px dashed #0066cc;
+	border-radius: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+	.trialflow-calendar .rbc-toolbar {
+		flex-direction: column;
+	}
+
+	.trialflow-calendar .rbc-toolbar-label {
+		order: -1;
+		margin-bottom: 12px;
+		font-size: 1.125rem;
+	}
+
+	.trialflow-calendar .rbc-toolbar button {
+		padding: 6px 12px;
+		font-size: 0.875rem;
+	}
+
+	.trialflow-calendar .rbc-header {
+		font-size: 0.875rem;
+		padding: 8px 4px;
+	}
+}

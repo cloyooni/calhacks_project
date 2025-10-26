@@ -1,0 +1,148 @@
+{
+  "id": "102019a1d950886752a8b74284554ef6001",
+  "version": "102019a1d95088674a084c030fb4456cc8c",
+  "schema": {
+    "name": "procedure",
+    "description": "Defines the clinical procedures involved in trials.",
+    "fields": [
+      {
+        "name": "id",
+        "description": "Unique identifier for each procedure.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal system identifier."
+        }
+      },
+      {
+        "name": "data_creator",
+        "description": "id of the user who creates the record",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        }
+      },
+      {
+        "name": "data_updater",
+        "description": "id of the user who updates the record",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        }
+      },
+      {
+        "name": "create_time",
+        "description": "create time in timestamp unix",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        },
+        "format": "timestamp"
+      },
+      {
+        "name": "update_time",
+        "description": "update time in timestamp unix",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal audit trail."
+        },
+        "format": "timestamp"
+      },
+      {
+        "name": "name",
+        "description": "The name of the clinical procedure.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal procedure information."
+        }
+      },
+      {
+        "name": "description",
+        "description": "A detailed description of the procedure.",
+        "type": 1,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal procedure information."
+        },
+        "nullable": true
+      },
+      {
+        "name": "duration_minutes",
+        "description": "The expected duration of the procedure in minutes.",
+        "type": 2,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal scheduling information."
+        },
+        "numeric": "int"
+      },
+      {
+        "name": "requires_recovery_time",
+        "description": "Flag indicating if the patient needs recovery time after this procedure.",
+        "type": 3,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal scheduling information."
+        }
+      },
+      {
+        "name": "recovery_hours",
+        "description": "The required recovery time in hours, if applicable.",
+        "type": 2,
+        "compliance": {
+          "confidentiality": 2,
+          "reason": "Internal scheduling information."
+        },
+        "nullable": true,
+        "numeric": "int"
+      }
+    ],
+    "indexes": [
+      {
+        "fields": [
+          "id"
+        ],
+        "unique": true,
+        "primary": true,
+        "order": false
+      },
+      {
+        "fields": [
+          "data_creator"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "data_updater"
+        ],
+        "order": false
+      },
+      {
+        "fields": [
+          "name"
+        ],
+        "unique": true,
+        "order": false
+      }
+    ]
+  },
+  "task": {
+    "id": "68fd5421128d32154869dba1",
+    "root": "68fd5421128d32154869dba1",
+    "project": "68fd5421128d32154869dba0",
+    "user": "c891f3f0-9041-701e-e0ce-9273ecb31f67"
+  },
+  "namespace": {
+    "id": "01987547fc6c72ecb453bd2736bd4ea0",
+    "tenant": 2,
+    "name": "global-1",
+    "default": true
+  },
+  "revision": 1
+}
