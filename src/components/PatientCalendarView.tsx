@@ -73,6 +73,25 @@ export function PatientCalendarView() {
 	const [currentView, setCurrentView] = useState<View>("week");
     const [appointments, setAppointments] = useState(mockPatientAppointments);
     const [activeWindowId, setActiveWindowId] = useState<string | null>(null);
+    const [slotOptions, setSlotOptions] = useState<string[]>([
+        "2025-10-28-10",
+        "2025-10-28-12",
+        "2025-10-29-10",
+        "2025-10-29-12",
+        "2025-10-29-13",
+        "2025-10-30-11",
+        "2025-10-30-12",
+    ]);
+    const [pendingCancelId, setPendingCancelId] = useState<string | null>(null);
+
+    const reAddSlotFromDate = (d: Date) => {
+        const y = d.getFullYear();
+        const m = d.getMonth() + 1; // 1-based
+        const day = d.getDate();
+        const hh = d.getHours();
+        const val = `${y}-${String(m).padStart(2, '0')}-${String(day).padStart(2, '0')}-${String(hh).padStart(2, '0')}`;
+        setSlotOptions((prev) => (prev.includes(val) ? prev : [...prev, val].sort()));
+    };
 
     const SlotButton = ({ label, onSelect }: { label: string; onSelect: () => void }) => (
         <Button
@@ -459,13 +478,31 @@ export function PatientCalendarView() {
 									return (
 										<div
 											key={ev.id}
-											className="absolute left-2 right-2 border rounded-md text-white text-xs px-2 py-1 shadow"
+											className="absolute left-2 right-2 border rounded-md text-white text-xs px-2 py-1 shadow group"
 											style={{ top: `${topPct}%`, height: `${heightPct}%`, backgroundColor: bg, borderColor: border }}
+											onClick={() => setPendingCancelId((prev) => (prev === ev.id ? null : ev.id))}
 										>
 											<div className="font-medium truncate">{ev.title}</div>
 											<div className="opacity-90">
 												{format(ev.start, 'h:mm a')} – {format(ev.end, 'h:mm a')}
 											</div>
+											{pendingCancelId === ev.id && isPE && (
+												<div className="absolute top-1 right-1">
+													<button
+														className="text-[11px] bg-white/90 text-[#ef4444] border border-[#ef4444]/40 rounded px-2 py-[2px] hover:bg-white"
+														onClick={(e) => {
+															e.stopPropagation();
+															// Remove appointment and return slot to dropdown
+															setAppointments((prev) => prev.filter((a) => a.id !== ev.id));
+															reAddSlotFromDate(ev.start);
+															setPendingCancelId(null);
+															toast.success('Appointment canceled');
+														}}
+													>
+														Cancel
+													</button>
+												</div>
+											)}
 										</div>
 									);
 								})}
@@ -749,9 +786,9 @@ export function PatientCalendarView() {
 													<div className="w-56">
 														<Select
 															onValueChange={(val) => {
-																// val format: YYYY-MM-DD-HH
 																const [y, m, d, hh] = val.split("-").map((n) => parseInt(n, 10));
 																const local = new Date(y, (m || 1) - 1, d || 1, hh || 10, 0, 0, 0);
+																setSlotOptions((prev) => prev.filter((v) => v !== val));
 																handleBookSlot(local);
 																setShowScheduleDialog(false);
 															}}
@@ -760,13 +797,16 @@ export function PatientCalendarView() {
 																<SelectValue placeholder="Choose a time" />
 															</SelectTrigger>
 															<SelectContent>
-																<SelectItem value="2025-10-28-10">Tue, Oct 28 • 10:00 AM</SelectItem>
-																<SelectItem value="2025-10-28-12">Tue, Oct 28 • 12:00 PM</SelectItem>
-																<SelectItem value="2025-10-29-10">Wed, Oct 29 • 10:00 AM</SelectItem>
-																<SelectItem value="2025-10-29-12">Wed, Oct 29 • 12:00 PM</SelectItem>
-																<SelectItem value="2025-10-29-13">Wed, Oct 29 • 1:00 PM</SelectItem>
-																<SelectItem value="2025-10-30-11">Thu, Oct 30 • 11:00 AM</SelectItem>
-																<SelectItem value="2025-10-30-12">Thu, Oct 30 • 12:00 PM</SelectItem>
+																{slotOptions.map((val) => {
+																	const [y, m, d, hh] = val.split("-").map((n) => parseInt(n, 10));
+																	const dt = new Date(y, (m || 1) - 1, d || 1, hh || 10, 0, 0, 0);
+																	const datePart = dt.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+																	const timePart = dt.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+																	const label = `${datePart} • ${timePart}`;
+																	return (
+																		<SelectItem key={val} value={val}>{label}</SelectItem>
+																	);
+																})}
 															</SelectContent>
 														</Select>
 													</div>
