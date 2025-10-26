@@ -3,9 +3,36 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/lib/auth-context";
-import { Calendar, Mail, Lock, User, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "@tanstack/react-router";
+
+function LogoTF({ size = 48, className = "" }: { size?: number; className?: string }) {
+  const deepBlue = "#1e40af";
+  return (
+    <div
+      className={`rounded-lg flex items-center justify-center select-none ${className}`}
+      style={{ width: size, height: size, background: "transparent" }}
+      aria-label="TrialFlow logo"
+    >
+      <span
+        style={{
+          fontFamily:
+            "-apple-system, 'SF Pro Display', 'SF Pro Text', BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+          fontWeight: 700,
+          fontStyle: "italic",
+          fontSize: Math.round(size * 0.56),
+          lineHeight: 1,
+          color: deepBlue,
+          letterSpacing: -1.5,
+        }}
+      >
+        <span style={{ position: "relative", left: -2 }}>t</span>
+        <span style={{ position: "relative", marginLeft: -6 }}>f</span>
+      </span>
+    </div>
+  );
+}
 
 export function SignInPage() {
   const { signIn, signInWithGoogle, signUp, isLoading, user } = useAuth();
@@ -94,23 +121,53 @@ export function SignInPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#E6F2FF] to-white flex items-center justify-center p-4">
+    <div
+      className="relative min-h-screen bg-gradient-to-br from-[#E6F2FF] to-white flex items-center justify-center p-4 overflow-hidden"
+      style={{
+        fontFamily:
+          "-apple-system, 'SF Pro Display', 'SF Pro Text', BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+      }}
+    >
+      {/* Thick off-screen conic-gradient rings */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute z-0 -left-[310px] -bottom-[310px] w-[720px] h-[720px] opacity-70"
+        style={{
+          background:
+            "conic-gradient(from 220deg at 50% 50%, #beb9fe, #c59bff, #8fb2ea, #6397d5, #b88cff, #5191c4, #2c6aa0, #6aa8e6, #beb9fe)",
+          WebkitMask: "radial-gradient(closest-side, transparent 55%, black 55%, black 71.7%, transparent 71.7%)",
+          mask: "radial-gradient(closest-side, transparent 55%, black 55%, black 71.7%, transparent 71.7%)",
+          borderRadius: "9999px",
+          filter: "none",
+        }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute z-0 -right-[342px] -top-[342px] w-[820px] h-[820px] opacity-70"
+        style={{
+          background:
+            "conic-gradient(from 40deg at 50% 50%, #beb9fe, #c59bff, #8fb2ea, #6397d5, #b88cff, #5191c4, #2c6aa0, #6aa8e6, #beb9fe)",
+          WebkitMask: "radial-gradient(closest-side, transparent 56%, black 56%, black 70.6%, transparent 70.6%)",
+          mask: "radial-gradient(closest-side, transparent 56%, black 56%, black 70.6%, transparent 70.6%)",
+          borderRadius: "9999px",
+          filter: "none",
+        }}
+      />
+
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-[#0066CC] to-[#0052A3] rounded-lg flex items-center justify-center">
-              <Calendar className="w-7 h-7 text-white" />
-            </div>
+          <div className="flex items-center justify-center gap-1 mb-4 -translate-x-[15px]">
+            <LogoTF size={96} />
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">TrialFlow</h1>
+              <h1 className="text-3xl font-semibold text-gray-900">TrialFlow</h1>
               <p className="text-sm text-gray-600">Clinical Trial Scheduling</p>
             </div>
           </div>
         </div>
 
         {/* Sign In Card */}
-        <Card className="shadow-lg">
+        <Card className="bg-white/98 shadow-lg relative z-10">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">
               {isSignUp ? 'Create Account' : 'Welcome Back'}
@@ -264,7 +321,7 @@ export function SignInPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-11 text-base font-medium bg-[#0066CC] hover:bg-[#0052A3] text-white rounded-md px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full h-11 text-base font-medium bg-[#5191c4] hover:bg-[#3f7cad] text-white rounded-md px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? 'Please wait...' : (isSignUp ? 'Create Account' : 'Sign In')}
               </button>
@@ -282,7 +339,7 @@ export function SignInPage() {
                     setSuccess('');
                     setFormData({ email: '', password: '', name: '', confirmPassword: '' });
                   }}
-                  className="text-[#0066CC] hover:text-[#0052A3] font-medium underline"
+                  className="text-[#5191c4] hover:text-[#3f7cad] font-medium underline"
                 >
                   {isSignUp ? 'Sign In' : 'Create Account'}
                 </button>

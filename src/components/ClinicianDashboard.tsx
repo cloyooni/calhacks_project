@@ -105,53 +105,53 @@ export function ClinicianDashboard() {
 		<div className="space-y-6">
 			{/* Stats Overview */}
 			<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-				<Card className="border-[#0066CC]/20">
+				<Card className="border-[#2c6aa0]/20">
 					<CardHeader className="pb-3">
 						<CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-							<Users className="w-4 h-4 text-[#0066CC]" />
+							<Users className="w-4 h-4 text-[#2c6aa0]" />
 							Total Patients
 						</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<p className="text-3xl font-bold text-[#0066CC]">
-							{patients.length}
+						<p className="text-3xl font-bold text-[#2c6aa0]">
+							{mockPatients.length}
 						</p>
 					</CardContent>
 				</Card>
 
-				<Card className="border-[#0066CC]/20">
+				<Card className="border-[#5191c4]/20">
 					<CardHeader className="pb-3">
 						<CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-							<Calendar className="w-4 h-4 text-[#0066CC]" />
+							<Calendar className="w-4 h-4 text-[#5191c4]" />
 							Upcoming Appointments
 						</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<p className="text-3xl font-bold text-[#0066CC]">12</p>
+						<p className="text-3xl font-bold text-[#5191c4]">12</p>
 					</CardContent>
 				</Card>
 
-				<Card className="border-[#0066CC]/20">
+				<Card className="border-[#8fb2ea]/20">
 					<CardHeader className="pb-3">
 						<CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-							<Clock className="w-4 h-4 text-orange-500" />
+							<Clock className="w-4 h-4 text-[#8fb2ea]" />
 							Open Time Windows
 						</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<p className="text-3xl font-bold text-orange-500">8</p>
+						<p className="text-3xl font-bold text-[#8fb2ea]">8</p>
 					</CardContent>
 				</Card>
 
-				<Card className="border-[#0066CC]/20">
+				<Card className="border-[#beb9fe]/20">
 					<CardHeader className="pb-3">
 						<CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-							<CheckCircle2 className="w-4 h-4 text-green-500" />
+							<CheckCircle2 className="w-4 h-4 text-[#beb9fe]" />
 							Completed Today
 						</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<p className="text-3xl font-bold text-green-500">5</p>
+						<p className="text-3xl font-bold text-[#beb9fe]">5</p>
 					</CardContent>
 				</Card>
 			</div>
@@ -171,17 +171,17 @@ export function ClinicianDashboard() {
 
 			{/* View Tabs - Calendar vs List */}
 			<Tabs defaultValue="list" className="w-full">
-				<TabsList className="bg-[#0066CC]/10">
+				<TabsList className="bg-[#5191c4]/10">
 					<TabsTrigger
 						value="list"
-						className="data-[state=active]:bg-[#0066CC] data-[state=active]:text-white"
+						className="data-[state=active]:bg-[#5191c4] data-[state=active]:text-white"
 					>
 						<List className="w-4 h-4 mr-2" />
 						Patient List
 					</TabsTrigger>
 					<TabsTrigger
 						value="calendar"
-						className="data-[state=active]:bg-[#0066CC] data-[state=active]:text-white"
+						className="data-[state=active]:bg-[#5191c4] data-[state=active]:text-white"
 					>
 						<CalendarDays className="w-4 h-4 mr-2" />
 						Calendar View
@@ -190,7 +190,7 @@ export function ClinicianDashboard() {
 
 				<TabsContent value="list" className="mt-6">
 					{/* Patients List */}
-					<Card className="border-[#0066CC]/20">
+					<Card className="border-[#5191c4]/20">
 						<CardHeader>
 							<div className="flex items-center justify-between">
 								<div>
@@ -205,7 +205,7 @@ export function ClinicianDashboard() {
 									<Button
 										onClick={() => setShowAddPatient(true)}
 										variant="outline"
-										className="border-[#0066CC] text-[#0066CC] hover:bg-[#0066CC] hover:text-white"
+										className="border-[#5191c4] text-[#5191c4] hover:bg-[#5191c4] hover:text-white"
 									>
 										<Users className="w-4 h-4 mr-2" />
 										Add Patient
@@ -213,7 +213,7 @@ export function ClinicianDashboard() {
 									<Button
 										onClick={() => setShowCreateWindow(true)}
 										variant="outline"
-										className="border-[#0066CC] text-[#0066CC] hover:bg-[#0066CC] hover:text-white"
+										className="border-[#5191c4] text-[#5191c4] hover:bg-[#5191c4] hover:text-white"
 									>
 										<Plus className="w-4 h-4 mr-2" />
 										Create Time Window
@@ -229,11 +229,11 @@ export function ClinicianDashboard() {
 										placeholder="Search patients by name or email..."
 										value={searchQuery}
 										onChange={(e) => setSearchQuery(e.target.value)}
-										className="pl-10 border-[#0066CC]/20 focus:border-[#0066CC]"
+										className="pl-10 border-[#5191c4]/20 focus:border-[#5191c4]"
 									/>
 								</div>
 								<Select value={phaseFilter} onValueChange={setPhaseFilter}>
-									<SelectTrigger className="w-48 border-[#0066CC]/20">
+									<SelectTrigger className="w-48 border-[#5191c4]/20">
 										<SelectValue placeholder="Filter by phase" />
 									</SelectTrigger>
 									<SelectContent>
@@ -259,7 +259,7 @@ export function ClinicianDashboard() {
 								{filteredPatients.map((patient) => (
 									<Card
 										key={patient.id}
-										className="border-[#0066CC]/10 hover:border-[#0066CC]/30 transition-all cursor-pointer"
+										className="border-[#5191c4]/10 hover:border-[#5191c4]/30 transition-all cursor-pointer"
 										onClick={() =>
 											setSelectedPatient(
 												selectedPatient?.id === patient.id ? null : patient,
@@ -269,7 +269,7 @@ export function ClinicianDashboard() {
 										<CardContent className="p-4">
 											<div className="flex items-center justify-between">
 												<div className="flex items-center gap-4">
-													<div className="w-12 h-12 bg-gradient-to-br from-[#0066CC] to-[#0052A3] rounded-full flex items-center justify-center text-white font-semibold">
+													<div className="w-12 h-12 bg-gradient-to-br from-[#5191c4] to-[#6397d5] rounded-full flex items-center justify-center text-white font-semibold">
 														{patient.first_name[0]}
 														{patient.last_name[0]}
 													</div>
@@ -285,7 +285,7 @@ export function ClinicianDashboard() {
 
 												<div className="flex items-center gap-6">
 													<div className="text-right">
-														<Badge className="bg-[#0066CC]/10 text-[#0066CC] hover:bg-[#0066CC]/20">
+														<Badge className="bg-[#5191c4]/10 text-[#5191c4] hover:bg-[#5191c4]/20">
 															{getTrialPhaseLabel(patient.trial_phase)}
 														</Badge>
 													</div>
@@ -295,13 +295,13 @@ export function ClinicianDashboard() {
 														<div className="flex items-center gap-2 mt-1">
 															<div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
 																<div
-																	className="h-full bg-gradient-to-r from-[#0066CC] to-[#0052A3] transition-all"
+																	className="h-full bg-gradient-to-r from-[#5191c4] to-[#6397d5] transition-all"
 																	style={{
 																		width: `${patient.completion_percentage}%`,
 																	}}
 																/>
 															</div>
-															<span className="text-sm font-semibold text-[#0066CC]">
+															<span className="text-sm font-semibold text-[#5191c4]">
 																{patient.completion_percentage}%
 															</span>
 														</div>
@@ -310,7 +310,7 @@ export function ClinicianDashboard() {
 													<Button
 														variant="outline"
 														size="sm"
-														className="border-[#0066CC] text-[#0066CC] hover:bg-[#0066CC] hover:text-white"
+														className="border-[#5191c4] text-[#5191c4] hover:bg-[#5191c4] hover:text-white"
 														onClick={(e) => {
 															e.stopPropagation();
 															setSelectedPatient(patient);
@@ -324,7 +324,7 @@ export function ClinicianDashboard() {
 
 											{/* Expanded Details */}
 											{selectedPatient?.id === patient.id && (
-												<div className="mt-4 pt-4 border-t border-[#0066CC]/10">
+												<div className="mt-4 pt-4 border-t border-[#5191c4]/10">
 													<PatientAppointmentsList patientId={patient.id} />
 												</div>
 											)}

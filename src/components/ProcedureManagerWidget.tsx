@@ -30,12 +30,12 @@ export function ProcedureManagerWidget() {
 
 	return (
 		<>
-			<Card className="border-[#0066CC]/20">
+			<Card className="border-[#5191c4]/20">
 				<CardHeader>
 					<div className="flex items-center justify-between">
 						<div>
 							<CardTitle className="text-xl text-gray-900 flex items-center gap-2">
-								<Clock className="w-5 h-5 text-[#0066CC]" />
+								<Clock className="w-5 h-5 text-[#5191c4]" />
 								Procedures
 							</CardTitle>
 							<CardDescription>
@@ -46,7 +46,7 @@ export function ProcedureManagerWidget() {
 							onClick={() => setAddDialogOpen(true)}
 							variant="outline"
 							size="sm"
-							className="border-[#0066CC] text-[#0066CC] hover:bg-[#0066CC] hover:text-white"
+							className="border-[#5191c4] text-[#5191c4] hover:bg-[#5191c4] hover:text-white"
 						>
 							<Plus className="w-4 h-4 mr-1" />
 							Add Procedure
@@ -67,7 +67,7 @@ export function ProcedureManagerWidget() {
 									key={procedure.id}
 									className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all"
 								>
-									<div className="w-10 h-10 bg-gradient-to-br from-[#0066CC] to-[#0052A3] rounded-lg flex items-center justify-center text-white font-semibold text-sm">
+									<div className="w-10 h-10 bg-gradient-to-b from-[#2c6aa0] via-[#5191c4] to-[#beb9fe] rounded-lg flex items-center justify-center text-white font-semibold text-sm">
 										{procedure.name[0]}
 									</div>
 									<div className="flex-1 min-w-0">
