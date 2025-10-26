@@ -3,12 +3,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/lib/auth-context";
-import { Calendar, Mail, Lock, User, Eye, EyeOff, ArrowLeft } from "lucide-react";
-import { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Calendar, Mail, Lock, User, Eye, EyeOff } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "@tanstack/react-router";
 
 export function SignInPage() {
-  const { signIn, signInWithGoogle, signUp, isLoading } = useAuth();
+  const { signIn, signInWithGoogle, signUp, isLoading, user } = useAuth();
+  const navigate = useNavigate();
   const [isSignUp, setIsSignUp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -20,6 +21,19 @@ export function SignInPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  // Redirect after successful sign in
+  useEffect(() => {
+    if (user) {
+      console.log('User signed in, redirecting...', user);
+      if (!user.role) {
+        navigate({ to: '/onboarding' });
+      } else {
+        // Navigate to role-specific page
+        navigate({ to: user.role === 'clinician' ? '/clinician' : '/patient' });
+      }
+    }
+  }, [user, navigate]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -29,6 +43,7 @@ export function SignInPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Form submitted!');
     setError('');
 
     // Basic validation
@@ -62,6 +77,9 @@ export function SignInPage() {
       } else {
         await signIn(formData.email, formData.password);
       }
+      
+      // Small delay to let React update the UI
+      await new Promise(resolve => setTimeout(resolve, 50));
     } catch (error) {
       setError(error instanceof Error ? error.message : (isSignUp ? 'Failed to create account' : 'Invalid email or password'));
     }
@@ -78,18 +96,6 @@ export function SignInPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#E6F2FF] to-white flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Back Button */}
-        <div className="mb-6">
-          <Button
-            variant="ghost"
-            onClick={() => window.history.back()}
-            className="text-gray-600 hover:text-gray-900"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
-        </div>
-
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
@@ -119,13 +125,12 @@ export function SignInPage() {
           
           <CardContent className="space-y-6">
             {/* Google Sign In Button */}
-            <Button
+            <button
               onClick={handleGoogleSignIn}
               disabled={isLoading}
-              variant="outline"
-              className="w-full h-11 text-base font-medium"
+              className="w-full h-11 text-base font-medium border border-gray-300 rounded-md px-4 py-2 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
             >
-              <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path
                   fill="#4285F4"
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -144,7 +149,7 @@ export function SignInPage() {
                 />
               </svg>
               Continue with Google
-            </Button>
+            </button>
 
             <div className="relative">
               <Separator />
@@ -256,13 +261,13 @@ export function SignInPage() {
                 </div>
               )}
 
-              <Button
+              <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-11 text-base font-medium bg-[#0066CC] hover:bg-[#0052A3]"
+                className="w-full h-11 text-base font-medium bg-[#0066CC] hover:bg-[#0052A3] text-white rounded-md px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? 'Please wait...' : (isSignUp ? 'Create Account' : 'Sign In')}
-              </Button>
+              </button>
             </form>
 
             {/* Toggle Sign Up/Sign In */}

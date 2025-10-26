@@ -12,7 +12,11 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as SigninImport } from './routes/signin'
+import { Route as PatientImport } from './routes/patient'
+import { Route as OnboardingImport } from './routes/onboarding'
 import { Route as JwtDebugImport } from './routes/jwt-debug'
+import { Route as ClinicianImport } from './routes/clinician'
+import { Route as AppImport } from './routes/app'
 import { Route as IndexImport } from './routes/index'
 import { Route as AuthGoogleCallbackImport } from './routes/auth.google.callback'
 
@@ -24,9 +28,33 @@ const SigninRoute = SigninImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const PatientRoute = PatientImport.update({
+  id: '/patient',
+  path: '/patient',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const OnboardingRoute = OnboardingImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const JwtDebugRoute = JwtDebugImport.update({
   id: '/jwt-debug',
   path: '/jwt-debug',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ClinicianRoute = ClinicianImport.update({
+  id: '/clinician',
+  path: '/clinician',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AppRoute = AppImport.update({
+  id: '/app',
+  path: '/app',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -53,11 +81,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppImport
+      parentRoute: typeof rootRoute
+    }
+    '/clinician': {
+      id: '/clinician'
+      path: '/clinician'
+      fullPath: '/clinician'
+      preLoaderRoute: typeof ClinicianImport
+      parentRoute: typeof rootRoute
+    }
     '/jwt-debug': {
       id: '/jwt-debug'
       path: '/jwt-debug'
       fullPath: '/jwt-debug'
       preLoaderRoute: typeof JwtDebugImport
+      parentRoute: typeof rootRoute
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingImport
+      parentRoute: typeof rootRoute
+    }
+    '/patient': {
+      id: '/patient'
+      path: '/patient'
+      fullPath: '/patient'
+      preLoaderRoute: typeof PatientImport
       parentRoute: typeof rootRoute
     }
     '/signin': {
@@ -81,14 +137,22 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
+  '/clinician': typeof ClinicianRoute
   '/jwt-debug': typeof JwtDebugRoute
+  '/onboarding': typeof OnboardingRoute
+  '/patient': typeof PatientRoute
   '/signin': typeof SigninRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
+  '/clinician': typeof ClinicianRoute
   '/jwt-debug': typeof JwtDebugRoute
+  '/onboarding': typeof OnboardingRoute
+  '/patient': typeof PatientRoute
   '/signin': typeof SigninRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
 }
@@ -96,30 +160,67 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
+  '/clinician': typeof ClinicianRoute
   '/jwt-debug': typeof JwtDebugRoute
+  '/onboarding': typeof OnboardingRoute
+  '/patient': typeof PatientRoute
   '/signin': typeof SigninRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/jwt-debug' | '/signin' | '/auth/google/callback'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/clinician'
+    | '/jwt-debug'
+    | '/onboarding'
+    | '/patient'
+    | '/signin'
+    | '/auth/google/callback'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/jwt-debug' | '/signin' | '/auth/google/callback'
-  id: '__root__' | '/' | '/jwt-debug' | '/signin' | '/auth/google/callback'
+  to:
+    | '/'
+    | '/app'
+    | '/clinician'
+    | '/jwt-debug'
+    | '/onboarding'
+    | '/patient'
+    | '/signin'
+    | '/auth/google/callback'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/clinician'
+    | '/jwt-debug'
+    | '/onboarding'
+    | '/patient'
+    | '/signin'
+    | '/auth/google/callback'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRoute
+  ClinicianRoute: typeof ClinicianRoute
   JwtDebugRoute: typeof JwtDebugRoute
+  OnboardingRoute: typeof OnboardingRoute
+  PatientRoute: typeof PatientRoute
   SigninRoute: typeof SigninRoute
   AuthGoogleCallbackRoute: typeof AuthGoogleCallbackRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRoute,
+  ClinicianRoute: ClinicianRoute,
   JwtDebugRoute: JwtDebugRoute,
+  OnboardingRoute: OnboardingRoute,
+  PatientRoute: PatientRoute,
   SigninRoute: SigninRoute,
   AuthGoogleCallbackRoute: AuthGoogleCallbackRoute,
 }
@@ -135,7 +236,11 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/app",
+        "/clinician",
         "/jwt-debug",
+        "/onboarding",
+        "/patient",
         "/signin",
         "/auth/google/callback"
       ]
@@ -143,8 +248,20 @@ export const routeTree = rootRoute
     "/": {
       "filePath": "index.tsx"
     },
+    "/app": {
+      "filePath": "app.tsx"
+    },
+    "/clinician": {
+      "filePath": "clinician.tsx"
+    },
     "/jwt-debug": {
       "filePath": "jwt-debug.tsx"
+    },
+    "/onboarding": {
+      "filePath": "onboarding.tsx"
+    },
+    "/patient": {
+      "filePath": "patient.tsx"
     },
     "/signin": {
       "filePath": "signin.tsx"

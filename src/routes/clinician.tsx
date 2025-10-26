@@ -1,15 +1,14 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
+import { ClinicianDashboard } from "@/components/ClinicianDashboard";
 import { useAuth } from "@/lib/auth-context";
-import type { UserRole } from "@/lib/types";
-import { Calendar, Users, LogOut, ArrowLeft } from "lucide-react";
-import { useState } from "react";
-import { ClinicianDashboard } from "./ClinicianDashboard";
-import { PatientDashboard } from "./PatientDashboard";
+import { Calendar, LogOut } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
-export function TrialFlowApp() {
-	const [userRole, setUserRole] = useState<UserRole>("clinician");
+export const Route = createFileRoute("/clinician")({
+	component: ClinicianPage,
+});
+
+function ClinicianPage() {
 	const { user, signOut } = useAuth();
 	const navigate = useNavigate();
 
@@ -30,9 +29,7 @@ export function TrialFlowApp() {
 							</div>
 							<div>
 								<h1 className="text-2xl font-bold text-gray-900">TrialFlow</h1>
-								<p className="text-sm text-gray-600">
-									Clinical Trial Scheduling Platform
-								</p>
+								<p className="text-sm text-gray-600">Clinical Trial Scheduling Platform</p>
 							</div>
 						</div>
 
@@ -54,40 +51,14 @@ export function TrialFlowApp() {
 								</div>
 							</div>
 
-							{/* Role Switcher */}
-							<Tabs
-								value={userRole}
-								onValueChange={(value) => setUserRole(value as UserRole)}
-								className="w-auto"
-							>
-								<TabsList className="bg-[#0066CC]/10">
-									<TabsTrigger
-										value="clinician"
-										className="data-[state=active]:bg-[#0066CC] data-[state=active]:text-white"
-									>
-										<Users className="w-4 h-4 mr-2" />
-										Clinician View
-									</TabsTrigger>
-									<TabsTrigger
-										value="patient"
-										className="data-[state=active]:bg-[#0066CC] data-[state=active]:text-white"
-									>
-										<Calendar className="w-4 h-4 mr-2" />
-										Patient View
-									</TabsTrigger>
-								</TabsList>
-							</Tabs>
-
 						{/* Sign Out Button */}
-						<Button
+						<button
 							onClick={handleSignOut}
-							variant="outline"
-							size="sm"
-							className="text-gray-600 hover:text-gray-900"
+							className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
 						>
-							<LogOut className="w-4 h-4 mr-2" />
+							<LogOut className="w-4 h-4" />
 							Sign Out
-						</Button>
+						</button>
 						</div>
 					</div>
 				</div>
@@ -95,11 +66,7 @@ export function TrialFlowApp() {
 
 			{/* Main Content */}
 			<main className="container mx-auto px-4 py-8">
-				{userRole === "clinician" ? (
-					<ClinicianDashboard />
-				) : (
-					<PatientDashboard />
-				)}
+				<ClinicianDashboard />
 			</main>
 		</div>
 	);
