@@ -11,10 +11,18 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as SigninImport } from './routes/signin'
 import { Route as JwtDebugImport } from './routes/jwt-debug'
 import { Route as IndexImport } from './routes/index'
+import { Route as AuthGoogleCallbackImport } from './routes/auth.google.callback'
 
 // Create/Update Routes
+
+const SigninRoute = SigninImport.update({
+  id: '/signin',
+  path: '/signin',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const JwtDebugRoute = JwtDebugImport.update({
   id: '/jwt-debug',
@@ -25,6 +33,12 @@ const JwtDebugRoute = JwtDebugImport.update({
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthGoogleCallbackRoute = AuthGoogleCallbackImport.update({
+  id: '/auth/google/callback',
+  path: '/auth/google/callback',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -46,6 +60,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JwtDebugImport
       parentRoute: typeof rootRoute
     }
+    '/signin': {
+      id: '/signin'
+      path: '/signin'
+      fullPath: '/signin'
+      preLoaderRoute: typeof SigninImport
+      parentRoute: typeof rootRoute
+    }
+    '/auth/google/callback': {
+      id: '/auth/google/callback'
+      path: '/auth/google/callback'
+      fullPath: '/auth/google/callback'
+      preLoaderRoute: typeof AuthGoogleCallbackImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -54,36 +82,46 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/jwt-debug': typeof JwtDebugRoute
+  '/signin': typeof SigninRoute
+  '/auth/google/callback': typeof AuthGoogleCallbackRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/jwt-debug': typeof JwtDebugRoute
+  '/signin': typeof SigninRoute
+  '/auth/google/callback': typeof AuthGoogleCallbackRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/jwt-debug': typeof JwtDebugRoute
+  '/signin': typeof SigninRoute
+  '/auth/google/callback': typeof AuthGoogleCallbackRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/jwt-debug'
+  fullPaths: '/' | '/jwt-debug' | '/signin' | '/auth/google/callback'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/jwt-debug'
-  id: '__root__' | '/' | '/jwt-debug'
+  to: '/' | '/jwt-debug' | '/signin' | '/auth/google/callback'
+  id: '__root__' | '/' | '/jwt-debug' | '/signin' | '/auth/google/callback'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   JwtDebugRoute: typeof JwtDebugRoute
+  SigninRoute: typeof SigninRoute
+  AuthGoogleCallbackRoute: typeof AuthGoogleCallbackRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   JwtDebugRoute: JwtDebugRoute,
+  SigninRoute: SigninRoute,
+  AuthGoogleCallbackRoute: AuthGoogleCallbackRoute,
 }
 
 export const routeTree = rootRoute
@@ -97,7 +135,9 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/jwt-debug"
+        "/jwt-debug",
+        "/signin",
+        "/auth/google/callback"
       ]
     },
     "/": {
@@ -105,6 +145,12 @@ export const routeTree = rootRoute
     },
     "/jwt-debug": {
       "filePath": "jwt-debug.tsx"
+    },
+    "/signin": {
+      "filePath": "signin.tsx"
+    },
+    "/auth/google/callback": {
+      "filePath": "auth.google.callback.tsx"
     }
   }
 }
