@@ -5,7 +5,7 @@ import {
 	getAppointmentStatusColor,
 	getAppointmentStatusLabel,
 } from "@/lib/types";
-import { Calendar, Clock, MapPin } from "lucide-react";
+import { Calendar, Clock } from "lucide-react";
 
 interface PatientAppointmentsListProps {
 	patientId: string;
@@ -19,17 +19,15 @@ export function PatientAppointmentsList({
 		{
 			id: "1",
 			procedureNames: ["Blood Draw", "Vital Signs"],
-			scheduledDate: "2025-01-28T10:00:00Z",
-			location: "Building A, Room 201",
-			durationMinutes: 45,
+			scheduledDate: "2025-10-27T09:00:00Z",
+			durationMinutes: 30,
 			status: AppointmentStatus.Scheduled,
 		},
 		{
 			id: "2",
-			procedureNames: ["ECG"],
-			scheduledDate: "2025-01-15T14:00:00Z",
-			location: "Building B, Room 105",
-			durationMinutes: 30,
+			procedureNames: ["ECG", "Questionnaire"],
+			scheduledDate: "2025-10-23T12:00:00Z",
+			durationMinutes: 45,
 			status: AppointmentStatus.Completed,
 		},
 	];
@@ -63,10 +61,6 @@ export function PatientAppointmentsList({
 								<span className="flex items-center gap-1">
 									<Clock className="w-3 h-3" />
 									{formatDateTime(appointment.scheduledDate)}
-								</span>
-								<span className="flex items-center gap-1">
-									<MapPin className="w-3 h-3" />
-									{appointment.location}
 								</span>
 							</div>
 						</div>
