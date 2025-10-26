@@ -86,7 +86,7 @@ export function PatientDashboard() {
 			{/* Burden Score Card moved to clinician dashboard */}
 
 			{/* Progress Tracker */}
-			<Card className="border-[#0066CC]/20 bg-gradient-to-br from-white to-[#E6F2FF]/30">
+			<Card className="border-[#5191c4]/20 bg-gradient-to-br from-white to-[#E6F2FF]/30">
 				<CardHeader>
 					<CardTitle className="text-xl text-gray-900">
 						Your Trial Progress
@@ -99,7 +99,7 @@ export function PatientDashboard() {
 					<div className="space-y-4">
 						<div className="flex items-center justify-between">
 							<div>
-								<p className="text-4xl font-bold text-[#0066CC]">
+								<p className="text-4xl font-bold text-[#5191c4]">
 									{completionPercentage}%
 								</p>
 								<p className="text-sm text-gray-600 mt-1">
@@ -107,30 +107,30 @@ export function PatientDashboard() {
 									completed
 								</p>
 							</div>
-							<div className="w-32 h-32 rounded-full border-8 border-[#0066CC] flex items-center justify-center">
-								<CheckCircle2 className="w-16 h-16 text-[#0066CC]" />
+							<div className="w-32 h-32 rounded-full border-8 border-[#5191c4] flex items-center justify-center">
+								<CheckCircle2 className="w-16 h-16 text-[#5191c4]" />
 							</div>
 						</div>
 
 						<div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
 							<div
-								className="h-full bg-gradient-to-r from-[#0066CC] to-[#0052A3] transition-all duration-500"
+								className="h-full bg-gradient-to-r from-[#5191c4] to-[#6397d5] transition-all duration-500"
 								style={{ width: `${completionPercentage}%` }}
 							/>
 						</div>
 
 						<div className="grid grid-cols-3 gap-4 pt-4">
-							<div className="text-center p-3 bg-white rounded-lg border border-[#0066CC]/10">
+							<div className="text-center p-3 bg-white rounded-lg border border-[#5191c4]/10">
 								<p className="text-2xl font-bold text-green-600">
 									{completedProcedures}
 								</p>
 								<p className="text-xs text-gray-600 mt-1">Completed</p>
 							</div>
-							<div className="text-center p-3 bg-white rounded-lg border border-[#0066CC]/10">
-								<p className="text-2xl font-bold text-[#0066CC]">2</p>
+							<div className="text-center p-3 bg-white rounded-lg border border-[#5191c4]/10">
+								<p className="text-2xl font-bold text-[#5191c4]">2</p>
 								<p className="text-xs text-gray-600 mt-1">Upcoming</p>
 							</div>
-							<div className="text-center p-3 bg-white rounded-lg border border-[#0066CC]/10">
+							<div className="text-center p-3 bg-white rounded-lg border border-[#5191c4]/10">
 								<p className="text-2xl font-bold text-gray-600">
 									{totalProcedures - completedProcedures}
 								</p>
@@ -143,17 +143,17 @@ export function PatientDashboard() {
 
 			{/* View Tabs - Calendar vs List */}
 			<Tabs defaultValue="list" className="w-full">
-				<TabsList className="bg-[#0066CC]/10">
+				<TabsList className="bg-[#5191c4]/10">
 					<TabsTrigger
 						value="list"
-						className="data-[state=active]:bg-[#0066CC] data-[state=active]:text-white"
+						className="data-[state=active]:bg-[#5191c4] data-[state=active]:text-white"
 					>
 						<List className="w-4 h-4 mr-2" />
 						List View
 					</TabsTrigger>
 					<TabsTrigger
 						value="calendar"
-						className="data-[state=active]:bg-[#0066CC] data-[state=active]:text-white"
+						className="data-[state=active]:bg-[#5191c4] data-[state=active]:text-white"
 					>
 						<CalendarDays className="w-4 h-4 mr-2" />
 						Calendar View
@@ -162,12 +162,12 @@ export function PatientDashboard() {
 
 				<TabsContent value="list" className="mt-6 space-y-6">
 					{/* Upcoming Appointments */}
-					<Card className="border-[#0066CC]/20">
+					<Card className="border-[#5191c4]/20">
 						<CardHeader>
 							<div className="flex items-center justify-between">
 								<div>
 									<CardTitle className="text-xl text-gray-900 flex items-center gap-2">
-										<Calendar className="w-5 h-5 text-[#0066CC]" />
+										<Calendar className="w-5 h-5 text-[#5191c4]" />
 										Upcoming Appointments
 									</CardTitle>
 									<CardDescription>
@@ -181,7 +181,7 @@ export function PatientDashboard() {
 										onClick={() =>
 											downloadMultipleICSFile(mockPatientAppointments)
 										}
-										className="border-[#0066CC] text-[#0066CC] hover:bg-[#0066CC]/10"
+										className="border-[#5191c4] text-[#5191c4] hover:bg-[#5191c4]/10"
 									>
 										<Download className="w-4 h-4 mr-1" />
 										Export All
@@ -193,7 +193,7 @@ export function PatientDashboard() {
 												addToGoogleCalendar(apt);
 											}
 										}}
-										className="bg-[#0066CC] hover:bg-[#0052A3] text-white"
+										className="bg-[#5191c4] hover:bg-[#6397d5] text-white"
 									>
 										<Share2 className="w-4 h-4 mr-1" />
 										Sync to Google
@@ -206,14 +206,14 @@ export function PatientDashboard() {
 								{mockUpcomingAppointments.map((appointment) => (
 									<Card
 										key={appointment.id}
-										className="border-[#0066CC]/10 bg-white"
+										className="border-[#5191c4]/10 bg-white"
 									>
 										<CardContent className="p-4">
 											<div className="flex items-start justify-between">
 												<div className="flex-1">
 													<div className="flex items-center gap-3 mb-2">
-														<div className="w-10 h-10 bg-[#0066CC]/10 rounded-lg flex items-center justify-center">
-															<Calendar className="w-5 h-5 text-[#0066CC]" />
+														<div className="w-10 h-10 bg-[#5191c4]/10 rounded-lg flex items-center justify-center">
+															<Calendar className="w-5 h-5 text-[#5191c4]" />
 														</div>
 														<div>
 															<h3 className="font-semibold text-gray-900">
@@ -270,10 +270,10 @@ export function PatientDashboard() {
 					</Card>
 
 					{/* Available Time Windows */}
-					<Card className="border-[#0066CC]/20">
+					<Card className="border-[#5191c4]/20">
 						<CardHeader>
 							<CardTitle className="text-xl text-gray-900 flex items-center gap-2">
-								<Clock className="w-5 h-5 text-[#0066CC]" />
+								<Clock className="w-5 h-5 text-[#5191c4]" />
 								Available Time Windows
 							</CardTitle>
 							<CardDescription>
@@ -285,10 +285,10 @@ export function PatientDashboard() {
 								{mockOpenTimeWindows.map((window) => (
 									<Card
 										key={window.id}
-										className={`border-[#0066CC]/20 cursor-pointer transition-all ${
+										className={`border-[#5191c4]/20 cursor-pointer transition-all ${
 											selectedTimeWindow === window.id
-												? "ring-2 ring-[#0066CC] bg-[#E6F2FF]/30"
-												: "hover:border-[#0066CC]/40"
+												? "ring-2 ring-[#5191c4] bg-[#E6F2FF]/30"
+												: "hover:border-[#5191c4]/40"
 										}`}
 										onClick={() => setSelectedTimeWindow(window.id)}
 									>
@@ -308,7 +308,7 @@ export function PatientDashboard() {
 												</div>
 
 												<Button
-													className="bg-[#0066CC] hover:bg-[#0052A3] text-white"
+													className="bg-[#5191c4] hover:bg-[#6397d5] text-white"
 													onClick={(e) => {
 														e.stopPropagation();
 														// Open scheduling dialog

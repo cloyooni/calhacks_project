@@ -37,10 +37,10 @@ export function AIRecommendations() {
 	}
 
 	return (
-		<Card className="border-[#0066CC]/20 bg-gradient-to-br from-white to-purple-50/30">
+		<Card className="border-[#5191c4]/20 bg-gradient-to-br from-white to-[#beb9fe]/10">
 			<CardHeader>
 				<CardTitle className="text-xl text-gray-900 flex items-center gap-2">
-					<Sparkles className="w-5 h-5 text-purple-600" />
+					<Sparkles className="w-5 h-5 text-[#5191c4]" />
 					AI Scheduling Recommendations
 				</CardTitle>
 				<CardDescription>
@@ -50,21 +50,21 @@ export function AIRecommendations() {
 			<CardContent>
 				<div className="space-y-3">
 					{recommendations.map((rec) => (
-						<Card key={rec.id} className="border-purple-200 bg-white">
+						<Card key={rec.id} className="border-[#beb9fe] bg-white">
 							<CardContent className="p-4">
 								<div className="flex items-start justify-between">
 									<div className="flex-1">
 										<div className="flex items-center gap-2 mb-2">
 											{rec.type === "bundle_procedures" && (
-												<Calendar className="w-4 h-4 text-purple-600" />
+												<Calendar className="w-4 h-4 text-[#5191c4]" />
 											)}
 											{rec.type === "optimize_window" && (
-												<AlertTriangle className="w-4 h-4 text-orange-600" />
+												<AlertTriangle className="w-4 h-4 text-[#8fb2ea]" />
 											)}
 											<h3 className="font-semibold text-gray-900">
 												{rec.title}
 											</h3>
-											<Badge className="bg-purple-100 text-purple-700 text-xs">
+											<Badge className="bg-[#beb9fe]/20 text-[#5191c4] text-xs">
 												{Math.round(rec.confidence * 100)}% confident
 											</Badge>
 										</div>
@@ -81,8 +81,8 @@ export function AIRecommendations() {
 														variant={idx === 0 ? "default" : "outline"}
 														className={
 															idx === 0
-																? "bg-purple-600 hover:bg-purple-700 text-white"
-																: "border-purple-600 text-purple-600 hover:bg-purple-50"
+																? "bg-[#5191c4] hover:bg-[#6397d5] text-white"
+																: "border-[#5191c4] text-[#5191c4] hover:bg-[#beb9fe]/10"
 														}
 													>
 														{idx === rec.actions.length - 1 && (
