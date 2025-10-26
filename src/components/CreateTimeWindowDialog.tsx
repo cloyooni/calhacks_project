@@ -71,31 +71,20 @@ export function CreateTimeWindowDialog({
 
 			console.log("Selected slot full data:", selectedSlot);
 
-			// Check if we have multiple days selected by examining the slots array
+			// Determine earliest/latest day directly from slot Date objects (avoid UTC string parsing)
 			let earliestDate = start;
 			let latestDate = end;
-
-			if (selectedSlot.slots && Array.isArray(selectedSlot.slots) && selectedSlot.slots.length > 1) {
-				// Get all unique dates from slots
-				const dates = selectedSlot.slots.map((slot) => {
-					const slotDate = slot instanceof Date ? slot : new Date(slot);
-					return format(slotDate, "yyyy-MM-dd");
-				});
-				const uniqueDates = Array.from(new Set(dates)).sort();
-
-				console.log("Multiple slots detected:", {
-					totalSlots: selectedSlot.slots.length,
-					uniqueDates: uniqueDates,
-				});
-
-				// For horizontal selection: use earliest and latest dates
-				if (uniqueDates.length > 1) {
-					earliestDate = new Date(uniqueDates[0]);
-					latestDate = new Date(uniqueDates[uniqueDates.length - 1]);
-				}
+			if (selectedSlot.slots && Array.isArray(selectedSlot.slots) && selectedSlot.slots.length > 0) {
+				const slotDates = selectedSlot.slots.map((slot) => (slot instanceof Date ? slot : new Date(slot)));
+				// Normalize to local midnight for comparison
+				const norm = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+				const normalized = slotDates.map(norm);
+				normalized.sort((a, b) => a.getTime() - b.getTime());
+				earliestDate = normalized[0] ?? start;
+				latestDate = normalized[normalized.length - 1] ?? end;
 			}
 
-			// Extract date range
+			// Extract date range strings
 			setStartDate(format(earliestDate, "yyyy-MM-dd"));
 			setEndDate(format(latestDate, "yyyy-MM-dd"));
 
