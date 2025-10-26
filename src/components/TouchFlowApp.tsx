@@ -39,7 +39,12 @@ export function TrialFlowApp() {
 										className="w-8 h-8 rounded-full"
 									/>
 								)}
-								<span>Welcome, {user?.name}</span>
+								<div className="flex flex-col">
+									<span>Welcome, {user?.name}</span>
+									{user?.role && (
+										<span className="text-xs text-gray-500 capitalize">{user.role}</span>
+									)}
+								</div>
 							</div>
 
 							{/* Role Switcher */}

@@ -7,6 +7,8 @@ export interface User {
   name: string;
   picture?: string;
   provider: 'email' | 'google';
+  role?: 'clinician' | 'patient';
+  hasCompletedOnboarding?: boolean;
 }
 
 interface StoredUser {
@@ -14,6 +16,8 @@ interface StoredUser {
   password: string;
   name: string;
   id: string;
+  role?: 'clinician' | 'patient';
+  hasCompletedOnboarding?: boolean;
 }
 
 interface AuthContextType {
@@ -23,6 +27,7 @@ interface AuthContextType {
   signInWithGoogle: () => Promise<void>;
   signOut: () => void;
   signUp: (email: string, password: string, name: string) => Promise<void>;
+  setUserRole: (role: 'clinician' | 'patient') => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -78,7 +83,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         id: foundUser.id,
         email: foundUser.email,
         name: foundUser.name,
-        provider: 'email'
+        provider: 'email',
+        role: foundUser.role,
+        hasCompletedOnboarding: foundUser.hasCompletedOnboarding
       };
       
       setUser(user);
@@ -125,7 +132,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         id: Date.now().toString(),
         email,
         password,
-        name
+        name,
+        hasCompletedOnboarding: false
       };
       
       storeUser(newUser);
@@ -134,7 +142,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         id: newUser.id,
         email: newUser.email,
         name: newUser.name,
-        provider: 'email'
+        provider: 'email',
+        hasCompletedOnboarding: false
       };
       
       setUser(user);
@@ -152,6 +161,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('trialflow_user');
   };
 
+  const setUserRole = (role: 'clinician' | 'patient') => {
+    if (user) {
+      console.log('Setting user role:', role);
+      const updatedUser = { ...user, role, hasCompletedOnboarding: true };
+      setUser(updatedUser);
+      localStorage.setItem('trialflow_user', JSON.stringify(updatedUser));
+      console.log('User role updated:', updatedUser);
+    } else {
+      console.error('Cannot set user role: no user logged in');
+    }
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -159,7 +180,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signIn,
       signInWithGoogle,
       signOut,
-      signUp
+      signUp,
+      setUserRole
     }}>
       {children}
     </AuthContext.Provider>
